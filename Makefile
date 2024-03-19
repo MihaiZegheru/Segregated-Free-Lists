@@ -3,10 +3,11 @@ CFLAGS=-Wall -Wextra -std=c99 -g3
 
 BUILD_DIR=build
 SRC_DIR=src
+INC_DIR=include
 
 EXE=segregated_free_lists
 SOURCES+=$(wildcard $(SRC_DIR)/*.c)
-HEADERS+= $(addprefix -I,$(wildcard $(SRC_DIR)))
+HEADERS+= $(addprefix -I,$(wildcard $(INC_DIR)))
 
 .PHONY: build
 build:
