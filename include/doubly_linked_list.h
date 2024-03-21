@@ -39,6 +39,19 @@ int8_t dll_is_empty(s_doubly_linked_list_t *dll) {
 	return 0;
 }
 
+s_node_t *dll_get_node(s_doubly_linked_list_t *dll, size_t pos) {
+	if (dll->m_size == 0 || pos >= dll->m_size) {
+		return NULL;
+	}
+
+	s_node_t *curr_node = dll->m_head;
+	for (size_t i = 1; i < pos; i++) {
+		curr_node = (s_node_t *) curr_node->m_next;
+	}
+
+	return curr_node;
+}
+
 void dll_insert_first(s_doubly_linked_list_t *dll, void *data) {
 	s_node_t *new_node = node_create(dll->m_data_size, data);
 
@@ -98,19 +111,56 @@ void dll_insert(s_doubly_linked_list_t *dll, size_t pos, void *data) {
 	dll->m_size++;
 }
 
-s_node_t *dll_get_node(s_doubly_linked_list_t *dll, size_t pos) {
-	if (dll->m_size == 0 || pos >= dll->m_size) {
-		// list empty
+s_node_t *dll_remove_first(s_doubly_linked_list_t *dll) {
+	if (dll_is_empty(dll)) {
 		return NULL;
 	}
 
-	s_node_t *curr_node = dll->m_head;
-	for (size_t i = 1; i < pos; i++) {
-		curr_node = (s_node_t *) curr_node->m_next;
+	s_node_t *node = dll->m_head;
+	dll->m_head = dll->m_head->m_next;
+
+	dll->m_size--;
+
+	return node;
+}
+
+s_node_t *dll_remove_last(s_doubly_linked_list_t *dll) {
+	if (dll_is_empty(dll)) {
+		return NULL;
 	}
 
-	return curr_node;
+	s_node_t *node = dll_get_node(dll, dll->m_size - 1);
+	if (node == dll->m_head) {
+		dll->m_head = NULL;
+	}
+	else {
+		node->m_prev->m_next = NULL;
+	}
+
+	dll->m_size--;
+
+	return node;
 }
+
+s_node_t *dll_remove(s_doubly_linked_list_t *dll, size_t pos) {
+	if (pos == 0) {
+		return dll_remove_first(dll);
+	}
+
+	if (pos == dll->m_size - 1) {
+		return dll_remove_last(dll);
+	}
+
+	s_node_t *node = dll_get_node(dll, pos);
+	DIE(node == NULL, "Index out of range");
+
+	node->m_prev->m_next = node->m_next;
+	node->m_next->m_prev = node->m_prev;
+
+	return node;
+}
+
+
 
 
 #endif // DOUBLY_LINKED_LIST_H__

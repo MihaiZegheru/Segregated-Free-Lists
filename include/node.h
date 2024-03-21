@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
+typedef struct s_node_t {
 	void *m_data;
 	size_t virtual_addr;
-	void *m_prev;
-	void *m_next;
+	struct s_node_t *m_prev;
+	struct s_node_t *m_next;
 } s_node_t;
 
 s_node_t *node_create(size_t data_size, void *data) {
