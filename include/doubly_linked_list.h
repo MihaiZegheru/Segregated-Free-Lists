@@ -77,7 +77,7 @@ void dll_insert(s_doubly_linked_list_t *dll, size_t pos, void *data) {
 		return;
 	}
 
-	if (pos == dll->m_size) {
+	if (pos >= dll->m_size) {
 		dll_insert_last(dll, data);
 		return;
 	}
@@ -96,6 +96,20 @@ void dll_insert(s_doubly_linked_list_t *dll, size_t pos, void *data) {
 	new_node->m_prev = curr_node;
 
 	dll->m_size++;
+}
+
+s_node_t *dll_get_node(s_doubly_linked_list_t *dll, size_t pos) {
+	if (dll->m_size == 0 || pos >= dll->m_size) {
+		// list empty
+		return NULL;
+	}
+
+	s_node_t *curr_node = dll->m_head;
+	for (size_t i = 1; i < pos; i++) {
+		curr_node = (s_node_t *) curr_node->m_next;
+	}
+
+	return curr_node;
 }
 
 

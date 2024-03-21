@@ -2,6 +2,7 @@
 #define STRING_UTILS_H__
 
 #include <inttypes.h>
+#include <stddef.h>
 
 #define MAX_LINE_SIZE 100
 

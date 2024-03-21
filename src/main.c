@@ -18,5 +18,7 @@ int main(void) {
 	int v[1];
 	v[0] = 1;
 	dll_insert_last(&dll, v);
+	s_node_t *a = dll_get_node(&dll, 0);
+	printf("%d\n", *(int *) a->m_data);
 	return 0;
 }
