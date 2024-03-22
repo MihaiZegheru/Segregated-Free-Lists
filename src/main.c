@@ -17,10 +17,13 @@ int main(void) {
 	dll = dll_create(8);
 	int v[1];
 	v[0] = 1;
-	dll_insert_last(&dll, v);
+	dll_insert_first(&dll, v);
 	v[0] = 4;
-	dll_insert_last(&dll, v);
-	dll_remove_first(&dll);
+	dll_insert_first(&dll, v);
+	// dll_remove_first(&dll);
+	v[0] = 10;
+	dll_insert(&dll, 1, v);
+	dll_remove(&dll, 1);
 	s_node_t *a = dll_get_node(&dll, 1);
 	printf("%d\n", *(int *) a->m_data);
 	return 0;
