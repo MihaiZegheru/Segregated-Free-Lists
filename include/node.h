@@ -7,28 +7,13 @@
 
 typedef struct s_node_t {
 	void *m_data;
-	size_t virtual_addr;
+	size_t m_virtual_addr;
 	struct s_node_t *m_prev;
 	struct s_node_t *m_next;
 } s_node_t;
 
-s_node_t *node_create(size_t data_size, void *data) {
-	s_node_t *node = (s_node_t *) malloc(sizeof(s_node_t));
-
-	node->m_data = malloc(data_size);
-	memcpy(node->m_data, data, data_size);
-
-	node->m_prev = NULL;
-	node->m_next = NULL;
-	node->virtual_addr = 0;
-
-	return node;
-}
-
-void node_destory(s_node_t *node) {
-	free(node->m_data);
-	free(node);
-}
+s_node_t *node_create(size_t data_size, size_t virtual_addr, void *data);
+void node_destory(s_node_t *node);
 
 
 #endif // NODE_H__

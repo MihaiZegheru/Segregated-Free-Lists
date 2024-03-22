@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -std=c99 -g3
+CFLAGS=-Wall -Wextra -std=c99 -g3 -g
 
 BUILD_DIR=build
 SRC_DIR=src

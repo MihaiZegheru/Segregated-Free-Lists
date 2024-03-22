@@ -5,22 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef DIE
-#include <errno.h>
-#include <stdio.h>
-#define DIE(assertion, call_description)				\
-        do {								\
-                if (assertion) {					\
-                        fprintf(stderr, "(%s, %d): ",			\
-                                        __FILE__, __LINE__);		\
-                        perror(call_description);			\
-                        exit(errno);					\
-                }							\
-        } while (0)
-#endif // DIE
-
 #include <command_type.h>
 #include <string_utils.h>
+#include <macro_definitions.h>
 
 #define IH_PARAMS (4 + 1)
 #define M_PARAMS  (1 + 1)
