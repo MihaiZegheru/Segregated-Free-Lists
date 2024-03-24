@@ -15,6 +15,10 @@ int main(void) {
 	// printf("%lld\n", cmd.m_IH_cmd.m_list_count);
 	// printf("%lld\n", cmd.m_IH_cmd.m_list_size);
 	// printf("%u\n", cmd.m_IH_cmd.m_should_reconstitute);
+	// char v[] = "0x10B";
+	// size_t a = string_utils_addr_to_uint(v);
+	// printf("%llu", a);
+	// return 0 ;
 	app_tick();
 	// s_doubly_linked_list_t *dll;
 	// dll = dll_create(8);

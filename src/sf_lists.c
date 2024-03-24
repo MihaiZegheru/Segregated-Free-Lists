@@ -35,17 +35,47 @@ void sf_lists_destroy(s_sf_lists_t *sf_lists) {
 // }
 
 void sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
-    dll_insert_by_addr(sf_lists->m_dll_array[data_size], node);
+	if (!sf_lists->m_should_reconstitute) {
+		dll_insert_by_addr(sf_lists->m_dll_array[data_size], node);
+		return;
+	}
+	size_t tag = node->m_tag;
+	
+	// CRAPA AICI CAND SHOULD REC IS TRUE
+
+	s_doubly_linked_list_t *dll;
+	s_node_t *other_node;
+	for (size_t i = 0; i < sf_lists->m_size; i++) {
+		dll = sf_lists->m_dll_array[i];
+		other_node = dll_remove_by_tag(dll, tag);
+
+		if (other_node != NULL) {
+			size_t new_addr;
+			if (other_node->m_virtual_addr < node->m_virtual_addr) {
+				new_addr = other_node->m_virtual_addr;
+			}
+			else {
+				new_addr = node->m_virtual_addr;
+			}
+			size_t new_size = data_size + dll->m_data_size;
+			node_destory(other_node);
+
+			node->m_virtual_addr = new_addr;
+			dll_insert_by_addr(sf_lists->m_dll_array[new_size], node);
+
+			break;
+		}
+	}
 }
 
-e_error_type_t sf_lists_top(s_sf_lists_t *sf_list, s_node_t **out_node,
+e_error_type_t sf_lists_top(s_sf_lists_t *sf_lists, s_node_t **out_node,
 		size_t *out_node_size, size_t data_size) {
 
     s_doubly_linked_list_t *dll;
     s_node_t *node;
-	printf("%llu %llu\n", data_size, sf_list->m_size);
-    for (size_t i = data_size; i < sf_list->m_size; i++) {
-        dll = sf_list->m_dll_array[i];
+	printf("%llu %llu\n", data_size, sf_lists->m_size);
+    for (size_t i = data_size; i < sf_lists->m_size; i++) {
+        dll = sf_lists->m_dll_array[i];
         node = dll_remove_first(dll);
 
         if (node != NULL) {
@@ -57,4 +87,24 @@ e_error_type_t sf_lists_top(s_sf_lists_t *sf_list, s_node_t **out_node,
 
     return ET_EMPTY;
     // CHECK IF NULL
+}
+
+e_error_type_t sf_list_remove_by_addr(s_sf_lists_t *sf_lists, s_node_t **out_node,
+		size_t *out_node_size, size_t addr) {
+	// check if addr is null and remove
+
+	s_doubly_linked_list_t *dll;
+    s_node_t *node;
+	for (size_t i = 0; i < sf_lists->m_size; i++) {
+        dll = sf_lists->m_dll_array[i];
+        node = dll_remove_by_addr(dll, addr);
+
+        if (node != NULL) {
+			*out_node = node;
+			*out_node_size = i;
+            return ET_NONE;
+        }
+    }
+
+	return ET_INVALID_FREE;
 }

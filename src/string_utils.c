@@ -1,5 +1,6 @@
 #include <string_utils.h>
 #include <stdio.h>
+
 int8_t string_utils_is_end_char(char c) {
 	if (c == '\0' || c == '\n') {
 		return 1;
@@ -39,7 +40,28 @@ size_t string_utils_addr_to_uint(char *addr) {
 		// this is an error
 		return -1;
 	}
-	size_t num = string_utils_str_to_uint(addr + 2);
+
+	addr += 2;
+
+	int64_t num = 0;
+	while (*addr) {
+		uint8_t byte = *addr;
+		addr++;
+
+		if (byte >= '0' && byte <= '9') {
+			byte -= '0';
+		}
+		else if (byte >= 'a' && byte <= 'f') {
+			byte -= 'a';
+			byte += 10;
+		}
+		else if (byte >= 'A' && byte <= 'F') {
+			byte -= 'A';
+			byte += 10;
+		}
+
+		num = (num << 4) | (byte & 0xF);
+	}
 
 	return num;
 }
@@ -60,7 +82,7 @@ size_t string_utils_str_to_uint(char *str) {
 int64_t string_utils_str_to_int(char *str) {
 	int64_t num = 0;
 
-	int64_t idx = 0;
+	size_t idx = 0;
 	while (!string_utils_is_end_char(str[idx])) {
 		num *= 10;
 		num += str[idx] - '0';

@@ -28,5 +28,9 @@ void sf_lists_destroy(s_sf_lists_t *sf_lists);
 void sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node);
 e_error_type_t sf_lists_top(s_sf_lists_t *sf_list, s_node_t **out_node,
 		size_t *out_node_size, size_t data_size);
+e_error_type_t sf_list_remove_by_addr(s_sf_lists_t *sf_lists, s_node_t **out_node,
+		size_t *out_node_size, size_t addr);
+e_error_type_t sf_list_remove_by_tag(s_sf_lists_t *sf_lists, s_node_t **out_node,
+		size_t *out_node_size, size_t tag);
 
 #endif // SF_LISTS_H__
