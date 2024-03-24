@@ -19,7 +19,7 @@ void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
 	wks->dll_dest = dll_create(0);
 
 	printf("%lld\n", cmd->m_heap_start_addr);
-	size_t tag = 0;
+	size_t tag = 1;
     size_t virtual_addr = cmd->m_heap_start_addr;
     for (size_t i = 0; i < cmd->m_list_count; i++) {
 		size_t node_size = (1 << 3) << i;
