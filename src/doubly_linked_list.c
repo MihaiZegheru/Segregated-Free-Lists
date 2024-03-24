@@ -183,7 +183,7 @@ s_node_t *dll_remove_by_addr(s_doubly_linked_list_t *dll, size_t addr) {
 		curr_node = curr_node->m_next;
 		idx++;
 	}
-	printf("\n%llu %llu\n", dll->m_data_size, dll->m_size);
+	printf("\n%lu %lu\n", dll->m_data_size, dll->m_size);
 	if (curr_node->m_virtual_addr == addr) {
 		return dll_remove(dll, idx);
 	}

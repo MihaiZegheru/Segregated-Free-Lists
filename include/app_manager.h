@@ -18,7 +18,7 @@ void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
 
 	wks->dll_dest = dll_create(0);
 
-	printf("%lld\n", cmd->m_heap_start_addr);
+	printf("%lu\n", cmd->m_heap_start_addr);
 	size_t tag = 1;
     size_t virtual_addr = cmd->m_heap_start_addr;
     for (size_t i = 0; i < cmd->m_list_count; i++) {
@@ -29,7 +29,7 @@ void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
             s_node_t *new_node = node_create(node_size, virtual_addr, tag,
 					node_size, NULL);
             sf_lists_insert(wks->sfl_src, node_size, new_node);
-            printf("%llu ", virtual_addr);
+            printf("%lu ", virtual_addr);
             virtual_addr += node_size;
 			tag++;
         }
@@ -44,8 +44,8 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 
 	// change die in err
     DIE(sf_lists_top(wks->sfl_src, &node, &node_size, cmd->m_size) == ET_EMPTY, "Didnt find");
-	printf("%lld\n", node_size);
-	printf("ADDR: %llu\n", node->m_virtual_addr);
+	printf("%lu\n", node_size);
+	printf("ADDR: %lu\n", node->m_virtual_addr);
 	if (node_size != cmd->m_size) {
 		// Split the node
 		size_t new_addr = node->m_virtual_addr + cmd->m_size;
@@ -83,7 +83,7 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 		printf("cant");
 		return;
 	}
-	printf("%lld\n", node->m_virtual_addr);
+	printf("%lu\n", node->m_virtual_addr);
 
 	// sf_lists_insert(wks->sfl_src, node_size, node);
 	sf_lists_insert(wks->sfl_src, node->m_size, node);
@@ -109,12 +109,12 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 		return;
 	}
 
-	printf("INFO: %lld %lld %lld\n", curr_node->m_virtual_addr, curr_node->m_size, cmd->m_src);
+	printf("INFO: %lu %lu %lu\n", curr_node->m_virtual_addr, curr_node->m_size, cmd->m_src);
 
 	// coudl have errors here due to unsigned to signed conversion
 	s_node_t *starting_node = curr_node;
 	int64_t left_size = (int64_t)cmd->m_size - (curr_node->m_size - (cmd->m_src - curr_node->m_virtual_addr));
-	printf("LEFT SIZE: %lld\n", left_size);
+	printf("LEFT SIZE: %lu\n", left_size);
 
 	while (idx < dll->m_size - 1 && left_size > 0) {
 		if (curr_node->m_virtual_addr + curr_node->m_size != curr_node->m_next->m_virtual_addr) {
@@ -123,7 +123,7 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 		curr_node = curr_node->m_next;
 		left_size -= curr_node->m_size;
 		idx++;
-		printf("LEFT SIZE: %lld\n", left_size);
+		printf("LEFT SIZE: %lu\n", left_size);
 	}
 
 	if (left_size > 0) {
@@ -174,12 +174,12 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 		return;
 	}
 
-	printf("INFO: %lld %lld %lld\n", curr_node->m_virtual_addr, curr_node->m_size, cmd->m_dest);
+	printf("INFO: %lu %lu %lu\n", curr_node->m_virtual_addr, curr_node->m_size, cmd->m_dest);
 
 	// coudl have errors here due to unsigned to signed conversion
 	s_node_t *starting_node = curr_node;
 	int64_t left_size = (int64_t)cmd->m_size - (curr_node->m_size - (cmd->m_dest - curr_node->m_virtual_addr));
-	printf("LEFT SIZE: %lld\n", left_size);
+	printf("LEFT SIZE: %lu\n", left_size);
 
 	while (idx < dll->m_size - 1 && left_size > 0) {
 		if (curr_node->m_virtual_addr + curr_node->m_size != curr_node->m_next->m_virtual_addr) {
@@ -188,7 +188,7 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 		curr_node = curr_node->m_next;
 		left_size -= curr_node->m_size;
 		idx++;
-		printf("LEFT SIZE: %lld\n", left_size);
+		printf("LEFT SIZE: %lu\n", left_size);
 	}
 
 	if (left_size > 0) {
@@ -202,13 +202,13 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	printf("%s\n", cmd->m_src);
 	printf("%s\n", cmd->m_src);
 	size_t offset = cmd->m_dest - curr_node->m_virtual_addr;
-	printf("%lld\n", offset);
+	printf("%ld\n", offset);
 	printf("%s\n", cmd->m_src);
 	for (size_t j = offset; idx < cmd->m_size && j < curr_node->m_size &&
 			!string_utils_is_end_char(cmd->m_src[idx]); j++) {
 		printf("%s\n", cmd->m_src);
 		*((char *)curr_node->m_data + j) = cmd->m_src[idx];
-		printf("%c %c %lld\n", *((char *)curr_node->m_data + j), cmd->m_src[idx], idx);
+		printf("%c %c %lu\n", *((char *)curr_node->m_data + j), cmd->m_src[idx], idx);
 		printf("%s\n", cmd->m_src);
 		idx++;
 	}
@@ -232,6 +232,8 @@ void app_tick() {
 		command_read(&cmd);
 
 		switch(cmd.m_default_cmd.command_type) {
+		case CT_NONE:
+			break;
 		case CT_INIT_HEAP:
 			app_init_sf_list(&wks, &(cmd.m_IH_cmd));
 			break;
@@ -246,6 +248,10 @@ void app_tick() {
 			break;
 		case CT_WRITE:
 			app_write(&wks, &(cmd.m_W_cmd));
+			break;
+		case CT_DUMP_MEMORY:
+			break;
+		case CT_DESTROY_HEAP:
 			break;
 		}
 

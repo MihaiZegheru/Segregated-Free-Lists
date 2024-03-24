@@ -80,7 +80,7 @@ e_error_type_t sf_lists_top(s_sf_lists_t *sf_lists, s_node_t **out_node,
 
     s_doubly_linked_list_t *dll;
     s_node_t *node;
-	printf("%llu %llu\n", data_size, sf_lists->m_size);
+	printf("%lu %lu\n", data_size, sf_lists->m_size);
     for (size_t i = data_size; i < sf_lists->m_size; i++) {
         dll = sf_lists->m_dll_array[i];
         node = dll_remove_first(dll);
