@@ -94,12 +94,11 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 		printf("mem doesnt ex");
 		return;
 	}
-	printf("readasdAD");
+
 	s_doubly_linked_list_t *dll = wks->dll_dest;
 	s_node_t *curr_node = dll->m_head;
 	size_t idx = 0;
-	// WHEN ONLY ONE NODE IN HERE AND SIZE NOT GOOD CRAPA (MALLOC 10  MALLOC 6 FREE 10 READ 6)
-	// this check only for start of node but pos can be in the middle
+
 	while (idx < dll->m_size - 1 && cmd->m_src - curr_node->m_virtual_addr >= curr_node->m_size) {
 		curr_node = curr_node->m_next;
 		idx++;
@@ -126,7 +125,6 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 		idx++;
 		printf("LEFT SIZE: %lld\n", left_size);
 	}
-	printf("aaa");
 
 	if (left_size > 0) {
 		// err cuz invalid address
@@ -136,10 +134,90 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 
 	curr_node = starting_node;
 	left_size = cmd->m_size;
+	size_t offset = cmd->m_src - curr_node->m_virtual_addr;
+	for (size_t j = offset; left_size > 0 && j < curr_node->m_size &&
+			left_size > 0; j++) {
+
+		printf("%c", *((char *)curr_node->m_data + j));
+		left_size--;
+	}
+
+	curr_node = curr_node->m_next;
+	printf("JJJ");
 	while (left_size > 0) {
 		for (size_t j = 0; j < curr_node->m_size && left_size > 0; j++) {
 			printf("%c", *((char *)curr_node->m_data + j));
 			left_size--;
+		}
+		curr_node = curr_node->m_next;
+	}
+	printf("\n");
+}
+
+void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
+	if (dll_is_empty(wks->dll_dest)) {
+		printf("mem doesnt ex");
+		return;
+	}
+
+	s_doubly_linked_list_t *dll = wks->dll_dest;
+	s_node_t *curr_node = dll->m_head;
+	size_t idx = 0;
+
+	while (idx < dll->m_size - 1 && cmd->m_dest - curr_node->m_virtual_addr >= curr_node->m_size) {
+		curr_node = curr_node->m_next;
+		idx++;
+	}
+
+	if (cmd->m_dest - curr_node->m_virtual_addr >= curr_node->m_size) {
+		printf("seg fault 1");
+		return;
+	}
+
+	printf("INFO: %lld %lld %lld\n", curr_node->m_virtual_addr, curr_node->m_size, cmd->m_dest);
+
+	// coudl have errors here due to unsigned to signed conversion
+	s_node_t *starting_node = curr_node;
+	int64_t left_size = (int64_t)cmd->m_size - (curr_node->m_size - (cmd->m_dest - curr_node->m_virtual_addr));
+	printf("LEFT SIZE: %lld\n", left_size);
+
+	while (idx < dll->m_size - 1 && left_size > 0) {
+		if (curr_node->m_virtual_addr + curr_node->m_size != curr_node->m_next->m_virtual_addr) {
+			break;
+		}
+		curr_node = curr_node->m_next;
+		left_size -= curr_node->m_size;
+		idx++;
+		printf("LEFT SIZE: %lld\n", left_size);
+	}
+
+	if (left_size > 0) {
+		// err cuz invalid address
+		printf("seg fault 2");
+		return;
+	}
+
+	curr_node = starting_node;
+	idx = 0;
+	printf("%s\n", cmd->m_src);
+	printf("%s\n", cmd->m_src);
+	size_t offset = cmd->m_dest - curr_node->m_virtual_addr;
+	printf("%lld\n", offset);
+	printf("%s\n", cmd->m_src);
+	for (size_t j = offset; idx < cmd->m_size && j < curr_node->m_size &&
+			!string_utils_is_end_char(cmd->m_src[idx]); j++) {
+		printf("%s\n", cmd->m_src);
+		*((char *)curr_node->m_data + j) = cmd->m_src[idx];
+		printf("%c %c %lld\n", *((char *)curr_node->m_data + j), cmd->m_src[idx], idx);
+		printf("%s\n", cmd->m_src);
+		idx++;
+	}
+
+	curr_node = curr_node->m_next;
+	while (idx < cmd->m_size && !string_utils_is_end_char(cmd->m_src[idx])) {
+		for (size_t j = 0; j < curr_node->m_size && !string_utils_is_end_char(cmd->m_src[idx]); j++) {
+			*((char *)curr_node->m_data + j) = cmd->m_src[idx];
+			idx++;
 		}
 		curr_node = curr_node->m_next;
 	}
@@ -165,6 +243,10 @@ void app_tick() {
 			break;
 		case CT_READ:
 			app_read(&wks, &(cmd.m_R_cmd));
+			break;
+		case CT_WRITE:
+			app_write(&wks, &(cmd.m_W_cmd));
+			break;
 		}
 
 		printf("\n");
