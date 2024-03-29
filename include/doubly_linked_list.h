@@ -24,6 +24,7 @@ void dll_insert_last(s_doubly_linked_list_t *dll, s_node_t *node);
 void dll_insert(s_doubly_linked_list_t *dll, size_t pos, s_node_t *node);
 // void dll_insert_node(s_doubly_linked_list_t *dll, s_node_t *node, size_t pos);
 void dll_insert_by_addr(s_doubly_linked_list_t *dll, s_node_t *node);
+void dll_insert_by_size(s_doubly_linked_list_t *dll, s_node_t *node);
 
 s_node_t *dll_remove_first(s_doubly_linked_list_t *dll);
 s_node_t *dll_remove_last(s_doubly_linked_list_t *dll);

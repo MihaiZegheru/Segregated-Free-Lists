@@ -34,7 +34,7 @@ void sf_lists_destroy(s_sf_lists_t *sf_lists) {
 
 // }
 
-void sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
+uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
 	if (!sf_lists->m_should_reconstitute) {
 		dll_insert_by_addr(sf_lists->m_dll_array[data_size], node);
 		return;
@@ -72,7 +72,9 @@ void sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
 
 	if (!found) {
 		dll_insert_by_addr(sf_lists->m_dll_array[data_size], node);
+		return 0;
 	}
+	return 1;
 }
 
 e_error_type_t sf_lists_top(s_sf_lists_t *sf_lists, s_node_t **out_node,

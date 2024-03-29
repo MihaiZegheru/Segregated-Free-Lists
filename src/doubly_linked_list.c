@@ -120,6 +120,23 @@ void dll_insert_by_addr(s_doubly_linked_list_t *dll, s_node_t *node) {
 	dll_insert(dll, idx, node);
 }
 
+void dll_insert_by_size(s_doubly_linked_list_t *dll, s_node_t *node) {
+	if (dll_is_empty(dll)) {
+		dll_insert(dll, 0, node);
+		return;
+	}
+
+	s_node_t *curr_node = dll->m_head;
+	size_t idx = 0;
+
+	while (idx < dll->m_size && curr_node->m_size < node->m_size) {
+		curr_node = curr_node->m_next;
+		idx++;
+	}
+
+	dll_insert(dll, idx, node);
+}
+
 s_node_t *dll_remove_first(s_doubly_linked_list_t *dll) {
 	if (dll_is_empty(dll)) {
 		return NULL;

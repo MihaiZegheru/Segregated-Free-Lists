@@ -3,11 +3,15 @@
 
 #include <command.h>
 #include <sf_lists.h>
+#include <stats_data_object.h>
 
 typedef struct {
+
     s_sf_lists_t *sfl_src;
     s_sf_lists_t *sfl_dest;
 	s_doubly_linked_list_t *dll_dest;
+	s_doubly_linked_list_t *dll_dest_by_size;
+	s_stats_data_object_t m_stats;
 } s_workspace_t;
 
 void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
@@ -17,6 +21,13 @@ void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
             cmd->m_heap_start_addr, 0);
 
 	wks->dll_dest = dll_create(0);
+	wks->m_stats.m_total_mem = cmd->m_list_count * cmd->m_list_size;
+	wks->m_stats.m_total_alloc_mem = 0;
+	wks->m_stats.m_num_free_blocks = 0;
+	wks->m_stats.m_num_alloc_blocks = 0;
+	wks->m_stats.m_num_malloc_calls = 0;
+	wks->m_stats.m_num_frag = 0;
+	wks->m_stats.m_num_free_calls = 0;
 
 	printf("%lu\n", cmd->m_heap_start_addr);
 	size_t tag = 1;
@@ -24,6 +35,8 @@ void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
     for (size_t i = 0; i < cmd->m_list_count; i++) {
 		size_t node_size = (1 << 3) << i;
         size_t count = cmd->m_list_size / node_size;
+
+		wks->m_stats.m_num_free_blocks += count;
 
         for (size_t j = 0; j < count; j++) {
             s_node_t *new_node = node_create(node_size, virtual_addr, tag,
@@ -61,14 +74,22 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 		// Insert allocated node
 		// sf_lists_insert(wks->sfl_dest, cmd->m_size, node);
 		dll_insert_by_addr(wks->dll_dest, node);
+		dll_insert_by_size(wks->dll_dest_by_size, node);
 		// Insert remainder node
 		sf_lists_insert(wks->sfl_src, new_size, new_node);
+
+		wks->m_stats.m_num_frag++;
 	}
 	else {
 		// Insert the whole node
 		// sf_lists_insert(wks->sfl_dest, node_size, node);
 		dll_insert_by_addr(wks->dll_dest, node);
+		wks->m_stats.m_num_free_blocks -= 1;
 	}
+
+	wks->m_stats.m_total_alloc_mem += cmd->m_size;
+	wks->m_stats.m_num_alloc_blocks++;
+	wks->m_stats.m_num_malloc_calls++;
 }
 
 void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
@@ -83,10 +104,21 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 		printf("cant");
 		return;
 	}
-	printf("%lu\n", node->m_virtual_addr);
+	dll_remove_by_addr(wks->dll_dest_by_size, cmd->m_addr);
 
+	printf("%lu\n", node->m_virtual_addr);
+	wks->m_stats.m_total_alloc_mem -= node->m_size;
+	wks->m_stats.m_num_alloc_blocks--;
+	wks->m_stats.m_num_free_calls++;
 	// sf_lists_insert(wks->sfl_src, node_size, node);
-	sf_lists_insert(wks->sfl_src, node->m_size, node);
+
+	uint8_t joined = sf_lists_insert(wks->sfl_src, node->m_size, node);
+	if (joined) {
+		wks->m_stats.m_num_frag--;
+	}
+	else {
+		wks->m_stats.m_num_free_blocks++;
+	}
 }
 
 void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
@@ -224,9 +256,52 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	printf("\n");
 }
 
+void app_dump_memory(s_workspace_t *wks, s_command_W_t *cmd) {
+	printf("+++++DUMP+++++\n");
+
+	printf("Total memory: %lld bytes", wks->m_stats.m_total_mem);
+	printf("Total allocated memory: %lld bytes", wks->m_stats.m_total_alloc_mem);
+	printf("Total free memory: %lld bytes", wks->m_stats.m_total_mem -
+			wks->m_stats.m_total_alloc_mem);
+	printf("Free blocks: %lld", wks->m_stats.m_num_free_blocks);
+	printf("Number of allocated blocks: %lld ", wks->m_stats.m_num_alloc_blocks);
+	printf("Number of malloc calls: %lld ", wks->m_stats.m_num_malloc_calls);
+	printf("Number of fragmentations: %lld ", wks->m_stats.m_num_frag);
+	printf("Number of free calls: %lld ", wks->m_stats.m_num_free_calls);
+
+	for (size_t i = 0; i < wks->sfl_src->m_size; i++) {
+		if (wks->sfl_src->m_dll_array[i]->m_size == 0) {
+			continue;
+		}
+
+		s_doubly_linked_list_t *dll = wks->sfl_src->m_dll_array[i];
+		size_t count = dll->m_size;
+
+		printf("Blocks with %lld bytes - %lld free block(s) :", i, count);
+
+		s_node_t *curr_node = dll->m_head;
+		for (size_t j = 0; j < count; j++) {
+			printf(" %lld", curr_node->m_virtual_addr); // add conv to hexa----------------------------------------------
+			curr_node = (s_node_t *) curr_node->m_next;
+		}
+		printf("\n");
+	}
+
+	printf("Allocated blocks :");
+	s_node_t *curr_node = wks->dll_dest_by_size->m_head;
+	for (size_t i = 0; i < wks->dll_dest_by_size->m_size; i++) {
+		printf(" (%lld - %lld)", curr_node->m_virtual_addr, curr_node->m_size);
+		curr_node = (s_node_t *) curr_node->m_next;
+	}
+	printf("\n");
+
+	printf("-----DUMP-----\n");
+}
+
 void app_tick() {
     s_workspace_t wks;
 	u_command_t cmd;
+
 
 	while (1) {
 		command_read(&cmd);
