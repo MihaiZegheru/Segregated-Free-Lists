@@ -37,7 +37,7 @@ void sf_lists_destroy(s_sf_lists_t *sf_lists) {
 uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
 	if (!sf_lists->m_should_reconstitute) {
 		dll_insert_by_addr(sf_lists->m_dll_array[data_size], node);
-		return;
+		return 0;
 	}
 	size_t tag = node->m_tag;
 
@@ -82,7 +82,7 @@ e_error_type_t sf_lists_top(s_sf_lists_t *sf_lists, s_node_t **out_node,
 
     s_doubly_linked_list_t *dll;
     s_node_t *node;
-	printf("%lu %lu\n", data_size, sf_lists->m_size);
+	// printf("%lu %lu\n", data_size, sf_lists->m_size);
     for (size_t i = data_size; i < sf_lists->m_size; i++) {
         dll = sf_lists->m_dll_array[i];
         node = dll_remove_first(dll);

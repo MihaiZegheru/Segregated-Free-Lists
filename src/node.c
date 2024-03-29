@@ -23,3 +23,7 @@ void node_destory(s_node_t *node) {
 	free(node->m_data);
 	free(node);
 }
+
+void node_light_destory(s_node_t *node) {
+	free(node);
+}

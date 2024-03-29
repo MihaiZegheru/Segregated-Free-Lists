@@ -73,7 +73,7 @@ void command_definitions_construct_command(u_command_t *ptr,
 		break;
 	case CT_WRITE:
 		ptr->m_W_cmd.m_dest = string_utils_addr_to_uint(buffer[1]);
-		ptr->m_W_cmd.m_src = buffer[2];
+		ptr->m_W_cmd.m_src = buffer[2] + 1;
 		ptr->m_W_cmd.m_size = string_utils_str_to_uint(buffer[3]);
 		break;
 	case CT_DUMP_MEMORY:

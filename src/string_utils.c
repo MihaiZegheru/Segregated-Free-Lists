@@ -66,6 +66,10 @@ size_t string_utils_addr_to_uint(char *addr) {
 	return num;
 }
 
+void string_utils_uint_to_addr(size_t num, char *addr) {
+
+}
+
 size_t string_utils_str_to_uint(char *str) {
 	size_t num = 0;
 

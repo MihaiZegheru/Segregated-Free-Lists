@@ -15,6 +15,7 @@ typedef struct {
 
 s_doubly_linked_list_t *dll_create(size_t data_size);
 void dll_destroy(s_doubly_linked_list_t *dll);
+void dll_light_destroy(s_doubly_linked_list_t *dll);
 
 int8_t dll_is_empty(s_doubly_linked_list_t *dll);
 s_node_t *dll_get_node(s_doubly_linked_list_t *dll, size_t pos);

@@ -21,6 +21,18 @@ void dll_destroy(s_doubly_linked_list_t *dll) {
 	free(dll);
 }
 
+void dll_light_destroy(s_doubly_linked_list_t *dll) {
+	s_node_t *curr_node = dll->m_head;
+	s_node_t *next_node;
+	for (size_t i = 0; i < dll->m_size; i++) {
+		next_node = (s_node_t *) curr_node->m_next;
+		node_light_destory(curr_node);
+		curr_node = next_node;
+	}
+
+	free(dll);
+}
+
 int8_t dll_is_empty(s_doubly_linked_list_t *dll) {
 	if (dll->m_size == 0) {
 		return 1;
