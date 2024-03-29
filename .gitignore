@@ -61,3 +61,24 @@ out
 # Folders
 build/*
 res/*
+
+# Checker
+check_utils/*
+cs/*
+input/*
+output/*
+ref/*
+target/*
+tasks/*
+tests/*
+*.checkpatch-camelcase.git.
+*.lock
+*.toml
+check
+*.sh
+image_check
+*.json
+*.rs
+.check.grade
+image_editor
+my_tests/*
