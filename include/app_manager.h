@@ -89,6 +89,7 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 		// Insert the whole node
 		// sf_lists_insert(wks->sfl_dest, node_size, node);
 		dll_insert_by_addr(wks->dll_dest, node);
+		dll_insert_by_size(wks->dll_dest_by_size, node);
 		wks->m_stats.m_num_free_blocks -= 1;
 	}
 
@@ -273,6 +274,7 @@ void app_dump_memory(s_workspace_t *wks, s_command_DM_t *cmd) {
 	printf("Number of fragmentations: %lld\n", wks->m_stats.m_num_frag);
 	printf("Number of free calls: %lld\n", wks->m_stats.m_num_free_calls);
 
+	char hex[MAX_LINE_SIZE];
 	for (size_t i = 0; i < wks->sfl_src->m_size; i++) {
 		if (wks->sfl_src->m_dll_array[i]->m_size == 0) {
 			continue;
@@ -285,7 +287,7 @@ void app_dump_memory(s_workspace_t *wks, s_command_DM_t *cmd) {
 
 		s_node_t *curr_node = dll->m_head;
 		for (size_t j = 0; j < count; j++) {
-			printf(" %lld", curr_node->m_virtual_addr); // add conv to hexa----------------------------------------------
+			printf(" 0x%x", curr_node->m_virtual_addr); // add conv to hexa----------------------------------------------
 			curr_node = (s_node_t *) curr_node->m_next;
 		}
 		printf("\n");
@@ -293,11 +295,14 @@ void app_dump_memory(s_workspace_t *wks, s_command_DM_t *cmd) {
 
 	printf("Allocated blocks :");
 	s_node_t *curr_node = wks->dll_dest_by_size->m_head;
-	printf(" (%lld - %lld)", curr_node->m_virtual_addr, curr_node->m_size);
+	if (curr_node == NULL) {
+		return;
+	}
+	printf(" (0x%x - %lld)", curr_node->m_virtual_addr, curr_node->m_size);
 
-	for (size_t i = 0; i < wks->dll_dest_by_size->m_size; i++) {
+	for (size_t i = 1; i < wks->dll_dest_by_size->m_size; i++) {
 		curr_node = (s_node_t *) curr_node->m_next;
-		printf(" (%lld - %lld)", curr_node->m_virtual_addr, curr_node->m_size);
+		printf(" (0x%x - %lld)", curr_node->m_virtual_addr, curr_node->m_size);
 	}
 	printf("\n");
 
