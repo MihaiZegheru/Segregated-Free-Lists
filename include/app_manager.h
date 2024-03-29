@@ -105,6 +105,7 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 	// change die in err
     // DIE(sf_list_remove_by_addr(wks->sfl_dest, &node, &node_size, cmd->m_addr) == ET_INVALID_FREE,
 	// 		"Didnt find");
+
 	node = dll_remove_by_addr(wks->dll_dest, cmd->m_addr);
 	if (node == NULL) {
 		printf("Invalid free\n");
@@ -112,7 +113,7 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 	}
 	dll_remove_by_addr(wks->dll_dest_by_size, cmd->m_addr);
 
-	printf("%lu\n", node->m_virtual_addr);
+	// printf("%lu\n", node->m_virtual_addr);
 	wks->m_stats.m_total_alloc_mem -= node->m_size;
 	wks->m_stats.m_num_alloc_blocks--;
 	wks->m_stats.m_num_free_calls++;
@@ -243,7 +244,7 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	// printf("%s\n", cmd->m_src);
 	for (size_t j = offset; idx < cmd->m_size && j < curr_node->m_size &&
 			!string_utils_is_end_char(cmd->m_src[idx]); j++) {
-		printf("%s\n", cmd->m_src);
+		// printf("%s\n", cmd->m_src);
 		*((char *)curr_node->m_data + j) = cmd->m_src[idx];
 		// printf("%c %c %lu\n", *((char *)curr_node->m_data + j), cmd->m_src[idx], idx);
 		// printf("%s\n", cmd->m_src);
@@ -349,8 +350,6 @@ void app_tick() {
 			app_destroy_heap(&wks, &(cmd.m_DH_cmd));
 			break;
 		}
-
-		printf("\n");
 	}
 
 }

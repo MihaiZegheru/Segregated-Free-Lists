@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include <command_type.h>
-#include <command_data_object.h>
 #include <command_definitions.h>
 #include <input_handler.h>
 #include <error_type.h>
