@@ -259,6 +259,10 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	// printf("%s\n", cmd->m_src);
 	for (size_t j = offset; idx < cmd->m_size && j < curr_node->m_size &&
 			!string_utils_is_end_char(cmd->m_src[idx]); j++) {
+
+		if (cmd->m_src[idx] == '\"') {
+			continue;
+		}
 		// printf("%s\n", cmd->m_src);
 		*((char *)curr_node->m_data + j) = cmd->m_src[idx];
 		// printf("%c %c %lu\n", *((char *)curr_node->m_data + j), cmd->m_src[idx], idx);
@@ -269,6 +273,9 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	curr_node = curr_node->m_next;
 	while (idx < cmd->m_size && !string_utils_is_end_char(cmd->m_src[idx])) {
 		for (size_t j = 0; j < curr_node->m_size && !string_utils_is_end_char(cmd->m_src[idx]); j++) {
+			if (cmd->m_src[idx] == '\"') {
+				continue;
+			}
 			*((char *)curr_node->m_data + j) = cmd->m_src[idx];
 			idx++;
 		}
