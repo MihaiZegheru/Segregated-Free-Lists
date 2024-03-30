@@ -240,7 +240,7 @@ s_node_t *dll_remove_prev(s_doubly_linked_list_t *dll, size_t tag,
 		idx++;
 	}
 
-	if (curr_node->m_tag == tag) {
+	if (curr_node->m_tag == tag && curr_node->m_virtual_addr + curr_node->m_size == curr_addr) {
 		return dll_remove(dll, idx);
 	}
 
@@ -263,7 +263,7 @@ s_node_t *dll_remove_next(s_doubly_linked_list_t *dll, size_t tag,
 		idx++;
 	}
 
-	if (curr_node->m_tag == tag) {
+	if (curr_node->m_tag == tag && curr_node->m_virtual_addr == next_addr) {
 		return dll_remove(dll, idx);
 	}
 
