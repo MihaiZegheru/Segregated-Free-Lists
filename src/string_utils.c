@@ -14,13 +14,24 @@ size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE]) {
 
 	size_t str_idx = 0;
 	size_t word_idx = 0;
+	uint8_t is_quote = 0;
 	while (!string_utils_is_end_char(str[str_idx])) {
-		buffer[word_count][word_idx] = str[str_idx];
+		if (str[str_idx] == '\"' && !is_quote) {
+			is_quote = 1;
+			str_idx++;
+			continue;
+		}
+		else if (str[str_idx] == '\"') {
+			is_quote = 0;
+		}
+		else {
+			buffer[word_count][word_idx] = str[str_idx];
+		}
 
 		str_idx++;
 		word_idx++;
 
-		if (str[str_idx] == split) {
+		if (str[str_idx] == split && !is_quote) {
 			buffer[word_count][word_idx] = '\0';
 			str_idx++;
 			word_count++;

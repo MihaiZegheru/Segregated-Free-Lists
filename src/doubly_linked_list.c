@@ -197,6 +197,7 @@ s_node_t *dll_remove(s_doubly_linked_list_t *dll, size_t pos) {
 
 	node->m_prev->m_next = node->m_next;
 	node->m_next->m_prev = node->m_prev;
+	dll->m_size--;
 
 	return node;
 }

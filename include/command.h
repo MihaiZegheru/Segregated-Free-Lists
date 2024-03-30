@@ -9,12 +9,10 @@
 #include <input_handler.h>
 #include <error_type.h>
 
-#define MAX_COMMAND_PARAMS 10
-
 e_error_type_t command_factory(u_command_t *ptr, size_t params_num,
-		char buffer[][MAX_LINE_SIZE]);
+		char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
 // e_error_type_t command_destroy(void *command_ptr, e_command_type_t command_type);
 
-e_error_type_t command_read(u_command_t *ptr);
+e_error_type_t command_read(u_command_t *ptr, char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
 
 #endif // COMMAND_H__

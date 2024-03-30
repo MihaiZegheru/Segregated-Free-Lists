@@ -9,6 +9,8 @@
 #include <string_utils.h>
 #include <macro_definitions.h>
 
+#define MAX_COMMAND_PARAMS 10
+
 #define IH_PARAMS (4 + 1)
 #define M_PARAMS  (1 + 1)
 #define F_PARAMS  (1 + 1)
