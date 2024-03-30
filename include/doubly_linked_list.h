@@ -31,6 +31,10 @@ s_node_t *dll_remove_first(s_doubly_linked_list_t *dll);
 s_node_t *dll_remove_last(s_doubly_linked_list_t *dll);
 s_node_t *dll_remove(s_doubly_linked_list_t *dll, size_t pos);
 s_node_t *dll_remove_by_addr(s_doubly_linked_list_t *dll, size_t addr);
-s_node_t *dll_remove_by_tag(s_doubly_linked_list_t *dll, size_t tag);
+
+s_node_t *dll_remove_prev(s_doubly_linked_list_t *dll, size_t tag,
+		size_t curr_addr);
+s_node_t *dll_remove_next(s_doubly_linked_list_t *dll, size_t tag,
+		size_t next_addr);
 
 #endif // DOUBLY_LINKED_LIST_H__

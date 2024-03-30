@@ -224,14 +224,18 @@ s_node_t *dll_remove_by_addr(s_doubly_linked_list_t *dll, size_t addr) {
 	return NULL;
 }
 
-s_node_t *dll_remove_by_tag(s_doubly_linked_list_t *dll, size_t tag) {
+s_node_t *dll_remove_prev(s_doubly_linked_list_t *dll, size_t tag,
+		size_t curr_addr) {
+
 	if (dll_is_empty(dll)) {
 		return NULL;
 	}
 
 	s_node_t *curr_node = dll->m_head;
 	size_t idx = 0;
-	while (idx < dll->m_size - 1 && curr_node->m_tag != tag) {
+	while (idx < dll->m_size - 1 && curr_node->m_tag != tag &&
+			curr_node->m_virtual_addr + curr_node->m_size != curr_addr) {
+
 		curr_node = curr_node->m_next;
 		idx++;
 	}
@@ -242,3 +246,27 @@ s_node_t *dll_remove_by_tag(s_doubly_linked_list_t *dll, size_t tag) {
 
 	return NULL;
 }
+
+s_node_t *dll_remove_next(s_doubly_linked_list_t *dll, size_t tag,
+		size_t next_addr) {
+
+	if (dll_is_empty(dll)) {
+		return NULL;
+	}
+
+	s_node_t *curr_node = dll->m_head;
+	size_t idx = 0;
+	while (idx < dll->m_size - 1 && curr_node->m_tag != tag &&
+			curr_node->m_virtual_addr != next_addr) {
+
+		curr_node = curr_node->m_next;
+		idx++;
+	}
+
+	if (curr_node->m_tag == tag) {
+		return dll_remove(dll, idx);
+	}
+
+	return NULL;
+}
+

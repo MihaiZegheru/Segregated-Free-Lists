@@ -43,16 +43,15 @@ uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node
 	}
 	size_t tag = node->m_tag;
 
-	// CRAPA AICI CAND SHOULD REC IS TRUE (OR MAYBE IT DOESNT!!!)
+	// when it s in the middle?
 
 	s_doubly_linked_list_t *dll;
 	s_node_t *other_node;
 	uint8_t found = 0;
 	for (size_t i = 0; i < sf_lists->m_size; i++) {
 		dll = sf_lists->m_dll_array[i];
-		other_node = dll_remove_by_tag(dll, tag);
 
-
+		other_node = dll_remove_next(dll, tag, node->m_virtual_addr + node->m_size);
 		if (other_node != NULL) {
 			found = 1;
 			size_t new_addr;
@@ -67,8 +66,23 @@ uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node
 
 			node->m_virtual_addr = new_addr;
 			dll_insert_by_addr(sf_lists->m_dll_array[new_size], node);
+		}
 
-			break;
+		other_node = dll_remove_prev(dll, tag, node->m_virtual_addr);
+		if (other_node != NULL) {
+			found = 1;
+			size_t new_addr;
+			if (other_node->m_virtual_addr < node->m_virtual_addr) {
+				new_addr = other_node->m_virtual_addr;
+			}
+			else {
+				new_addr = node->m_virtual_addr;
+			}
+			size_t new_size = data_size + dll->m_data_size;
+			node_destory(other_node);
+
+			node->m_virtual_addr = new_addr;
+			dll_insert_by_addr(sf_lists->m_dll_array[new_size], node);
 		}
 	}
 
