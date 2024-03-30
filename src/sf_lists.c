@@ -35,7 +35,7 @@ void sf_lists_destroy(s_sf_lists_t *sf_lists) {
 // static void sf_list_insert_and_join(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
 
 // }
-
+// int count = 0;
 uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
 	if (!sf_lists->m_should_reconstitute) {
 		dll_insert_by_addr(sf_lists->m_dll_array[data_size], node);
@@ -53,7 +53,7 @@ uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node
 
 		other_node = dll_remove_next(dll, tag, node->m_virtual_addr + node->m_size);
 		if (other_node != NULL) {
-			found = 1;
+			found++;
 			size_t new_addr;
 			if (other_node->m_virtual_addr < node->m_virtual_addr) {
 				new_addr = other_node->m_virtual_addr;
@@ -61,16 +61,23 @@ uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node
 			else {
 				new_addr = node->m_virtual_addr;
 			}
-			size_t new_size = data_size + dll->m_data_size;
-			node_destory(other_node);
 
+			node->m_size = node->m_size + other_node->m_size;
 			node->m_virtual_addr = new_addr;
-			dll_insert_by_addr(sf_lists->m_dll_array[new_size], node);
+			node->m_next = NULL;
+			node->m_prev = NULL;
+
+			node_destory(other_node);
+			i = 0;
+			continue;
+			// count++;
+
+			// dll_insert_by_addr(sf_lists->m_dll_array[new_size], node);
 		}
 
 		other_node = dll_remove_prev(dll, tag, node->m_virtual_addr);
 		if (other_node != NULL) {
-			found = 1;
+			found++;
 			size_t new_addr;
 			if (other_node->m_virtual_addr < node->m_virtual_addr) {
 				new_addr = other_node->m_virtual_addr;
@@ -78,19 +85,24 @@ uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node
 			else {
 				new_addr = node->m_virtual_addr;
 			}
-			size_t new_size = data_size + dll->m_data_size;
-			node_destory(other_node);
 
+			node->m_size = node->m_size + other_node->m_size;
 			node->m_virtual_addr = new_addr;
-			dll_insert_by_addr(sf_lists->m_dll_array[new_size], node);
+			node->m_next = NULL;
+			node->m_prev = NULL;
+
+			node_destory(other_node);
+			i = 0;
+			continue;
+			// count++;
+
+			// dll_insert_by_addr(sf_lists->m_dll_array[new_size], node);
 		}
 	}
 
-	if (!found) {
-		dll_insert_by_addr(sf_lists->m_dll_array[data_size], node);
-		return 0;
-	}
-	return 1;
+	dll_insert_by_addr(sf_lists->m_dll_array[node->m_size], node);
+	// printf("%lld\n", count);
+	return found;
 }
 
 e_error_type_t sf_lists_top(s_sf_lists_t *sf_lists, s_node_t **out_node,

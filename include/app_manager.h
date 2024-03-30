@@ -143,7 +143,8 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 
 	uint8_t joined = sf_lists_insert(wks->sfl_src, node->m_size, node);
 	if (joined) {
-		wks->m_stats.m_num_frag--;
+		// wks->m_stats.m_num_frag -= joined;
+		wks->m_stats.m_num_free_blocks -= joined - 1;
 	}
 	else {
 		wks->m_stats.m_num_free_blocks++;

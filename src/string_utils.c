@@ -59,7 +59,7 @@ size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE]) {
 }
 
 size_t string_utils_addr_to_uint(char *addr) {
-	if (addr[0] != '0' || addr[1] != 'x') {
+	if (addr[0] != '0' || (addr[1] != 'x' && addr[1] != 'X')) {
 		// this is an error
 		return -1;
 	}
