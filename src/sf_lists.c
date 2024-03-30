@@ -19,7 +19,7 @@ s_sf_lists_t *sf_lists_create(size_t size, size_t lists_size, size_t virtual_add
     sf_lists->m_lists_size = lists_size;
     sf_lists->m_virtual_addr = virtual_addr;
     sf_lists->m_should_reconstitute = should_reconstitute;
-
+	// printf("HELLO\n");
     return sf_lists;
 }
 
@@ -27,7 +27,9 @@ void sf_lists_destroy(s_sf_lists_t *sf_lists) {
     for (size_t i = 0; i < sf_lists->m_size; i++) {
         dll_destroy(sf_lists->m_dll_array[i]);
     }
+	free(sf_lists->m_dll_array);
     free(sf_lists);
+	// printf("BYE\n");
 }
 
 // static void sf_list_insert_and_join(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {

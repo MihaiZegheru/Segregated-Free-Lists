@@ -8,7 +8,7 @@
 typedef struct {
 
     s_sf_lists_t *sfl_src;
-    s_sf_lists_t *sfl_dest;
+    // s_sf_lists_t *sfl_dest;
 	s_doubly_linked_list_t *dll_dest;
 	s_doubly_linked_list_t *dll_dest_by_size;
 	s_stats_data_object_t m_stats;
@@ -17,8 +17,8 @@ typedef struct {
 void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
     wks->sfl_src = sf_lists_create(cmd->m_list_count, cmd->m_list_size,
             cmd->m_heap_start_addr, cmd->m_should_reconstitute);
-    wks->sfl_dest = sf_lists_create(cmd->m_list_count, cmd->m_list_size,
-            cmd->m_heap_start_addr, 0);
+    // wks->sfl_dest = sf_lists_create(cmd->m_list_count, cmd->m_list_size,
+    //         cmd->m_heap_start_addr, 0);
 
 	wks->dll_dest = dll_create(0);
 	wks->dll_dest_by_size = dll_create(0);
@@ -42,7 +42,7 @@ void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
 
         for (size_t j = 0; j < count; j++) {
             s_node_t *new_node = node_create(node_size, virtual_addr, tag,
-					node_size, NULL);
+					node_size, NULL, 0);
             sf_lists_insert(wks->sfl_src, node_size, new_node);
             // printf("%lu ", virtual_addr);
             virtual_addr += node_size;
@@ -73,7 +73,7 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 		node->m_size = cmd->m_size;
 
 		// Keep the same node tag for rejoining and add new size
-		s_node_t *new_node = node_create(0, new_addr, node->m_tag, new_size, NULL);
+		s_node_t *new_node = node_create(0, new_addr, node->m_tag, new_size, NULL, 1);
 		new_node->m_data = (char *) node->m_data + cmd->m_size;
 
 		// Insert allocated node
@@ -82,7 +82,7 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 
 
 		s_node_t *new_size_node = node_create(0, node->m_virtual_addr,
-				node->m_tag, node->m_size, NULL);
+				node->m_tag, node->m_size, NULL, 1);
 		dll_insert_by_size(wks->dll_dest_by_size, new_size_node);
 
 		// Insert remainder node
@@ -96,7 +96,7 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 		dll_insert_by_addr(wks->dll_dest, node);
 
 		s_node_t *new_size_node = node_create(0, node->m_virtual_addr,
-				node->m_tag, node->m_size, NULL);
+				node->m_tag, node->m_size, NULL, 1);
 		dll_insert_by_size(wks->dll_dest_by_size, new_size_node);
 
 		wks->m_stats.m_num_free_blocks -= 1;
@@ -121,7 +121,7 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 	}
 
 	s_node_t *node_by_size = dll_remove_by_addr(wks->dll_dest_by_size, cmd->m_addr); // th is should be here
-	free(node_by_size);
+	node_light_destory(node_by_size);
 
 	// printf("%lu\n", node->m_virtual_addr);
 	wks->m_stats.m_total_alloc_mem -= node->m_size;
@@ -322,17 +322,17 @@ void app_dump_memory(s_workspace_t *wks, s_command_DM_t *cmd) {
 
 void app_destroy_heap(s_workspace_t *wks, s_command_DH_t *cmd) {
 	dll_destroy(wks->dll_dest);
-	dll_light_destroy(wks->dll_dest_by_size);
+	dll_destroy(wks->dll_dest_by_size);
 	sf_lists_destroy(wks->sfl_src);
-	sf_lists_destroy(wks->sfl_dest);
+	// sf_lists_destroy(wks->sfl_dest);
 }
 
 void app_tick() {
     s_workspace_t wks;
 	u_command_t cmd;
 
-
-	while (1) {
+	uint8_t should_run = 1;
+	while (should_run) {
 		command_read(&cmd);
 
 		switch(cmd.m_default_cmd.command_type) {
@@ -358,6 +358,7 @@ void app_tick() {
 			break;
 		case CT_DESTROY_HEAP:
 			app_destroy_heap(&wks, &(cmd.m_DH_cmd));
+			should_run = 0;
 			break;
 		}
 	}

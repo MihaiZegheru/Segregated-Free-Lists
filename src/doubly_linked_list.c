@@ -2,6 +2,7 @@
 
 s_doubly_linked_list_t *dll_create(size_t data_size) {
 	s_doubly_linked_list_t *dll = malloc(sizeof(s_doubly_linked_list_t));
+	// check if it did
 	dll->m_head = NULL;
 	dll->m_data_size = data_size;
 	dll->m_size = 0;
