@@ -83,7 +83,8 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 
 		s_node_t *new_size_node = node_create(0, node->m_virtual_addr,
 				node->m_tag, node->m_size, NULL, 1);
-		dll_insert_by_size(wks->dll_dest_by_size, new_size_node);
+		// dll_insert_by_size(wks->dll_dest_by_size, new_size_node);
+		dll_insert_last(wks->dll_dest_by_size, new_size_node);
 
 		// Insert remainder node
 		sf_lists_insert(wks->sfl_src, new_size, new_node);
@@ -97,7 +98,8 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 
 		s_node_t *new_size_node = node_create(0, node->m_virtual_addr,
 				node->m_tag, node->m_size, NULL, 1);
-		dll_insert_by_size(wks->dll_dest_by_size, new_size_node);
+		// dll_insert_by_size(wks->dll_dest_by_size, new_size_node);
+		dll_insert_last(wks->dll_dest_by_size, new_size_node);
 
 		wks->m_stats.m_num_free_blocks -= 1;
 	}

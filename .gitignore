@@ -80,5 +80,5 @@ image_check
 *.json
 *.rs
 .check.grade
-image_editor
+sfl
 my_tests/*
