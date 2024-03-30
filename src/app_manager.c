@@ -1,6 +1,7 @@
 #include <app_manager.h>
 
-void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
+void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd)
+{
     wks->sfl_src = sf_lists_create(cmd->m_list_count, cmd->m_list_size,
             cmd->m_heap_start_addr, cmd->m_should_reconstitute);
 
@@ -33,7 +34,8 @@ void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
     }
 }
 
-void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
+void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd)
+{
     s_node_t *node;
 	size_t node_size;
 
@@ -81,7 +83,8 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 	wks->m_stats.m_num_malloc_calls++;
 }
 
-void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
+void app_free_node(s_workspace_t *wks, s_command_F_t *cmd)
+{
 	s_node_t *node;
 
 	node = dll_remove_by_addr(wks->dll_dest, cmd->m_addr);
@@ -101,7 +104,8 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 		wks->m_stats.m_num_free_blocks++;
 }
 
-void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
+void app_read(s_workspace_t *wks, s_command_R_t *cmd)
+{
 	if (dll_is_empty(wks->dll_dest)) {
 		printf(INVALID_READ);
 		exit(0);
@@ -169,7 +173,8 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 	printf("\n");
 }
 
-void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
+void app_write(s_workspace_t *wks, s_command_W_t *cmd)
+{
 	if (dll_is_empty(wks->dll_dest)) {
 		printf(INVALID_READ);
 		return;
@@ -250,7 +255,8 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	}
 }
 
-void app_dump_memory(s_workspace_t *wks) {
+void app_dump_memory(s_workspace_t *wks)
+{
 	printf("+++++DUMP+++++\n");
 	printf("Total memory: %ld bytes\n", wks->m_stats.m_total_mem);
 	printf("Total allocated memory: %ld bytes\n",
@@ -300,22 +306,23 @@ void app_dump_memory(s_workspace_t *wks) {
 	printf("-----DUMP-----\n");
 }
 
-void app_destroy_heap(s_workspace_t *wks) {
+void app_destroy_heap(s_workspace_t *wks)
+{
 	dll_destroy(wks->dll_dest);
 	sf_lists_destroy(wks->sfl_src);
 }
 
 static void app_init_input_buffer
-		(char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]) {
-
+		(char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE])
+{
 	for (size_t i = 0; i < MAX_COMMAND_PARAMS; i++)
 		for (size_t j = 0; j < MAX_LINE_SIZE; j++)
 			buffer[i][j] = '\0';
 }
 
 uint8_t app_tick(s_workspace_t *wks, u_command_t *cmd,
-				 char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]) {
-
+				 char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE])
+{
 		command_read(cmd, buffer);
 
 		switch(cmd->m_default_cmd.command_type) {
@@ -347,7 +354,8 @@ uint8_t app_tick(s_workspace_t *wks, u_command_t *cmd,
 	return 1;
 }
 
-void app_main_loop() {
+void app_main_loop()
+{
 	s_workspace_t wks;
 	u_command_t cmd;
 

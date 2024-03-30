@@ -1,6 +1,7 @@
 #include <string_utils.h>
 
-int8_t string_utils_is_end_char(char c) {
+int8_t string_utils_is_end_char(char c)
+{
 	if (c == '\0' || c == '\n')
 		return 1;
 
@@ -8,7 +9,8 @@ int8_t string_utils_is_end_char(char c) {
 }
 
 // return how many words
-size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE]) {
+size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE])
+{
 	size_t word_count = 0;
 
 	size_t str_idx = 0;
@@ -53,7 +55,8 @@ size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE]) {
 	return word_count;
 }
 
-size_t string_utils_addr_to_uint(char *addr) {
+size_t string_utils_addr_to_uint(char *addr)
+{
 	if (addr[0] != '0' || (addr[1] != 'x' && addr[1] != 'X'))
 		return -1;
 
@@ -82,7 +85,8 @@ size_t string_utils_addr_to_uint(char *addr) {
 	return num;
 }
 
-size_t string_utils_str_to_uint(char *str) {
+size_t string_utils_str_to_uint(char *str)
+{
 	size_t num = 0;
 
 	size_t idx = 0;
@@ -95,7 +99,8 @@ size_t string_utils_str_to_uint(char *str) {
 	return num;
 }
 
-int64_t string_utils_str_to_int(char *str) {
+int64_t string_utils_str_to_int(char *str)
+{
 	int64_t num = 0;
 
 	size_t idx = 0;

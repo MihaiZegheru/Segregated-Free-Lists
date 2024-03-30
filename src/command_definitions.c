@@ -1,6 +1,7 @@
 #include <command_definitions.h>
 
-size_t command_definitions_get_number_of_params(e_command_type_t command_type) {
+size_t command_definitions_get_number_of_params(e_command_type_t command_type)
+{
 	switch (command_type) {
 	case CT_INIT_HEAP:
 		return IH_PARAMS;
@@ -23,7 +24,8 @@ size_t command_definitions_get_number_of_params(e_command_type_t command_type) {
 	return 0;
 }
 
-e_command_type_t command_definitions_get_command_type(char *name) {
+e_command_type_t command_definitions_get_command_type(char *name)
+{
 	if (!strcmp(name, IH_STRING))
 		return CT_INIT_HEAP;
 	else if (!strcmp(name, M_STRING))
@@ -43,8 +45,8 @@ e_command_type_t command_definitions_get_command_type(char *name) {
 }
 
 void command_definitions_construct_command
-		(u_command_t *ptr,char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]) {
-
+		(u_command_t *ptr,char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE])
+{
 	e_command_type_t command_type = ptr->m_default_cmd.command_type;
 
 	switch (command_type) {
