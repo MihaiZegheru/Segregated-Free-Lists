@@ -4,26 +4,19 @@
 #include <command.h>
 #include <sf_lists.h>
 #include <stats_data_object.h>
-#include <string.h>
 #include <string_utils.h>
 
 typedef struct {
-
     s_sf_lists_t *sfl_src;
-    // s_sf_lists_t *sfl_dest;
 	s_doubly_linked_list_t *dll_dest;
-	s_doubly_linked_list_t *dll_dest_by_size;
 	s_stats_data_object_t m_stats;
 } s_workspace_t;
 
 void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
     wks->sfl_src = sf_lists_create(cmd->m_list_count, cmd->m_list_size,
             cmd->m_heap_start_addr, cmd->m_should_reconstitute);
-    // wks->sfl_dest = sf_lists_create(cmd->m_list_count, cmd->m_list_size,
-    //         cmd->m_heap_start_addr, 0);
 
 	wks->dll_dest = dll_create(0);
-	wks->dll_dest_by_size = dll_create(0);
 
 	wks->m_stats.m_total_mem = cmd->m_list_count * cmd->m_list_size;
 	wks->m_stats.m_total_alloc_mem = 0;
@@ -33,7 +26,6 @@ void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
 	wks->m_stats.m_num_frag = 0;
 	wks->m_stats.m_num_free_calls = 0;
 
-	// printf("%lu\n", cmd->m_heap_start_addr);
 	size_t tag = 1;
     size_t virtual_addr = cmd->m_heap_start_addr;
     for (size_t i = 0; i < cmd->m_list_count; i++) {
@@ -46,26 +38,22 @@ void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd) {
             s_node_t *new_node = node_create(node_size, virtual_addr, tag,
 					node_size, NULL, 0);
             sf_lists_insert(wks->sfl_src, node_size, new_node);
-            // printf("%lu ", virtual_addr);
+
             virtual_addr += node_size;
 			tag++;
         }
-		// printf("\n");
     }
 }
 
-// MALOC MOARE CAND DAU 1 CA ARG LA JOINGING LA NODES
 void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
     s_node_t *node;
 	size_t node_size;
 
-	// change die in err
 	if (sf_lists_top(wks->sfl_src, &node, &node_size, cmd->m_size) == ET_EMPTY) {
-		printf("Out of memory\n");
+		printf(FAILED_TO_ALLOCATE);
 		return;
 	}
-	// printf("%lu\n", node_size);
-	// printf("ADDR: %lu\n", node->m_virtual_addr);
+
 	if (node_size != cmd->m_size) {
 		// Split the node
 		size_t new_addr = node->m_virtual_addr + cmd->m_size;
@@ -79,36 +67,20 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 		new_node->m_data = (char *) node->m_data + cmd->m_size;
 
 		// Insert allocated node
-		// sf_lists_insert(wks->sfl_dest, cmd->m_size, node);
 		node->m_prev = NULL;
 		node->m_next = NULL;
 		dll_insert_by_addr(wks->dll_dest, node);
 
-
-		// s_node_t *new_size_node = node_create(0, node->m_virtual_addr,
-				// node->m_tag, node->m_size, NULL, 1);
-		// dll_insert_by_size(wks->dll_dest_by_size, new_size_node);
-		// dll_insert_by_addr(wks->dll_dest_by_size, new_size_node);
-		// dll_insert_last(wks->dll_dest_by_size, new_size_node);
-
-		// Insert remainder node
+		// Insert remaining node
 		sf_lists_insert(wks->sfl_src, new_size, new_node);
 
 		wks->m_stats.m_num_frag++;
 	}
 	else {
 		// Insert the whole node
-		// sf_lists_insert(wks->sfl_dest, node_size, node);
 		node->m_prev = NULL;
 		node->m_next = NULL;
 		dll_insert_by_addr(wks->dll_dest, node);
-
-		// s_node_t *new_size_node = node_create(0, node->m_virtual_addr,
-				// node->m_tag, node->m_size, NULL, 1);
-		// dll_insert_by_size(wks->dll_dest_by_size, new_size_node);
-		// dll_insert_last(wks->dll_dest_by_size, new_size_node);
-
-		// dll_insert_by_addr(wks->dll_dest_by_size, new_size_node);
 
 		wks->m_stats.m_num_free_blocks -= 1;
 	}
@@ -120,30 +92,19 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 
 void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 	s_node_t *node;
-	// size_t node_size;
-	// app_dump_memory(wks, NULL);
 
-	// change die in err
-    // DIE(sf_list_remove_by_addr(wks->sfl_dest, &node, &node_size, cmd->m_addr) == ET_INVALID_FREE,
-	// 		"Didnt find");
 	node = dll_remove_by_addr(wks->dll_dest, cmd->m_addr);
 	if (node == NULL) {
-		printf("Invalid free\n");
+		printf(INVALID_FREE);
 		return;
 	}
-	// app_dump_memory(wks, NULL);
-	// s_node_t *node_by_size = dll_remove_by_addr(wks->dll_dest_by_size, cmd->m_addr); // th is should be here
-	// node_destory(node_by_size);
 
-	// printf("%lu\n", node->m_virtual_addr);
 	wks->m_stats.m_total_alloc_mem -= node->m_size;
 	wks->m_stats.m_num_alloc_blocks--;
 	wks->m_stats.m_num_free_calls++;
-	// sf_lists_insert(wks->sfl_src, node_size, node);
 
 	uint8_t joined = sf_lists_insert(wks->sfl_src, node->m_size, node);
 	if (joined) {
-		// wks->m_stats.m_num_frag -= joined;
 		wks->m_stats.m_num_free_blocks -= joined - 1;
 	}
 	else {
@@ -153,8 +114,8 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 
 void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 	if (dll_is_empty(wks->dll_dest)) {
-		printf("mem doesnt ex");
-		return;
+		printf(INVALID_READ);
+		exit(0);
 	}
 
 	s_doubly_linked_list_t *dll = wks->dll_dest;
@@ -167,18 +128,14 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 	}
 
 	if (cmd->m_src - curr_node->m_virtual_addr >= curr_node->m_size) {
-		printf("Segmentation fault (core dumped)\n");
+		printf(SEG_FAULT);
 		app_dump_memory(wks, NULL);
+		app_destroy_heap(wks, NULL);
 		exit(0);
-		return;
 	}
 
-	// printf("INFO: %lu %lu %lu\n", curr_node->m_virtual_addr, curr_node->m_size, cmd->m_src);
-
-	// coudl have errors here due to unsigned to signed conversion
 	s_node_t *starting_node = curr_node;
 	int64_t left_size = (int64_t)cmd->m_size - (curr_node->m_size - (cmd->m_src - curr_node->m_virtual_addr));
-	// printf("LEFT SIZE: %lu\n", left_size);
 
 	while (idx < dll->m_size - 1 && left_size > 0) {
 		if (curr_node->m_virtual_addr + curr_node->m_size != curr_node->m_next->m_virtual_addr) {
@@ -187,13 +144,12 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 		curr_node = curr_node->m_next;
 		left_size -= curr_node->m_size;
 		idx++;
-		// printf("LEFT SIZE: %lu\n", left_size);
 	}
 
 	if (left_size > 0) {
-		// err cuz invalid address
-		printf("Segmentation fault (core dumped)\n");
+		printf(SEG_FAULT);
 		app_dump_memory(wks, NULL);
+		app_destroy_heap(wks, NULL);
 		exit(0);
 		return;
 	}
@@ -221,7 +177,7 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 
 void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	if (dll_is_empty(wks->dll_dest)) {
-		printf("mem doesnt ex");
+		printf(INVALID_READ);
 		return;
 	}
 
@@ -229,11 +185,7 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	s_node_t *curr_node = dll->m_head;
 	size_t idx = 0;
 
-	size_t actual_size = 0;
-	// while (!string_utils_is_end_char(cmd->m_src[actual_size])) {
-		// actual_size++;
-	// }
-	actual_size = strlen(cmd->m_src);
+	size_t actual_size = strlen(cmd->m_src);
 	if (actual_size < cmd->m_size) {
 		cmd->m_size = actual_size;
 	}
@@ -244,18 +196,15 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	}
 
 	if (cmd->m_dest - curr_node->m_virtual_addr >= curr_node->m_size) {
-		printf("Segmentation fault (core dumped)\n");
+		printf(SEG_FAULT);
 		app_dump_memory(wks, NULL);
+		app_destroy_heap(wks, NULL);
 		exit(0);
 		return;
 	}
 
-	// printf("INFO: %lu %lu %lu\n", curr_node->m_virtual_addr, curr_node->m_size, cmd->m_dest);
-
-	// coudl have errors here due to unsigned to signed conversion
 	s_node_t *starting_node = curr_node;
 	int64_t left_size = (int64_t)cmd->m_size - (curr_node->m_size - (cmd->m_dest - curr_node->m_virtual_addr));
-	// printf("LEFT SIZE: %lu\n", left_size);
 
 	while (idx < dll->m_size - 1 && left_size > 0) {
 		if (curr_node->m_virtual_addr + curr_node->m_size != curr_node->m_next->m_virtual_addr) {
@@ -264,34 +213,28 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 		curr_node = curr_node->m_next;
 		left_size -= curr_node->m_size;
 		idx++;
-		// printf("LEFT SIZE: %lu\n", left_size);
 	}
 
 	if (left_size > 0) {
-		// err cuz invalid address
-		printf("Segmentation fault (core dumped)\n");
+		printf(SEG_FAULT);
 		app_dump_memory(wks, NULL);
+		app_destroy_heap(wks, NULL);
 		exit(0);
 		return;
 	}
 
 	curr_node = starting_node;
 	idx = 0;
-	// printf("%s\n", cmd->m_src);
-	// printf("%s\n", cmd->m_src);
 	size_t offset = cmd->m_dest - curr_node->m_virtual_addr;
-	// printf("%ld\n", offset);
-	// printf("%s\n", cmd->m_src);
+
 	for (size_t j = offset; idx < cmd->m_size && j < curr_node->m_size &&
 			!string_utils_is_end_char(cmd->m_src[idx]); j++) {
 
 		if (cmd->m_src[idx] == '\"') {
 			continue;
 		}
-		// printf("%s\n", cmd->m_src);
+
 		*((char *)curr_node->m_data + j) = cmd->m_src[idx];
-		// printf("%c %c %lu\n", *((char *)curr_node->m_data + j), cmd->m_src[idx], idx);
-		// printf("%s\n", cmd->m_src);
 		idx++;
 	}
 
@@ -306,7 +249,6 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 		}
 		curr_node = curr_node->m_next;
 	}
-	// printf("\n");
 }
 
 void app_dump_memory(s_workspace_t *wks, s_command_DM_t *cmd) {
@@ -335,7 +277,7 @@ void app_dump_memory(s_workspace_t *wks, s_command_DM_t *cmd) {
 
 		s_node_t *curr_node = dll->m_head;
 		for (size_t j = 0; j < count; j++) {
-			printf(" 0x%x", curr_node->m_virtual_addr); // add conv to hexa----------------------------------------------
+			printf(" 0x%x", curr_node->m_virtual_addr);
 			curr_node = (s_node_t *) curr_node->m_next;
 		}
 		printf("\n");
@@ -362,54 +304,57 @@ void app_dump_memory(s_workspace_t *wks, s_command_DM_t *cmd) {
 
 void app_destroy_heap(s_workspace_t *wks, s_command_DH_t *cmd) {
 	dll_destroy(wks->dll_dest);
-	dll_destroy(wks->dll_dest_by_size);
 	sf_lists_destroy(wks->sfl_src);
-	// sf_lists_destroy(wks->sfl_dest);
 }
 
-void app_tick() {
-    s_workspace_t wks;
-	u_command_t cmd;
-
-	char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE];
+static void app_init_input_buffer(char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]) {
 	for (size_t i = 0; i < MAX_COMMAND_PARAMS; i++) {
 		for (size_t j = 0; j < MAX_LINE_SIZE; j++) {
 			buffer[i][j] = '\0';
 		}
 	}
+}
 
-	uint8_t should_run = 1;
-	while (should_run) {
-		command_read(&cmd, buffer);
+uint8_t app_tick(s_workspace_t *wks, u_command_t *cmd, char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]) {
+		command_read(cmd, buffer);
 
-		switch(cmd.m_default_cmd.command_type) {
+		switch(cmd->m_default_cmd.command_type) {
 		case CT_NONE:
 			break;
 		case CT_INIT_HEAP:
-			app_init_sf_list(&wks, &(cmd.m_IH_cmd));
+			app_init_sf_list(wks, &(cmd->m_IH_cmd));
 			break;
 		case CT_MALLOC:
-			app_malloc_node(&wks, &(cmd.m_M_cmd));
+			app_malloc_node(wks, &(cmd->m_M_cmd));
 			break;
 		case CT_FREE:
-			app_free_node(&wks, &(cmd.m_F_cmd));
+			app_free_node(wks, &(cmd->m_F_cmd));
 			break;
 		case CT_READ:
-			app_read(&wks, &(cmd.m_R_cmd));
+			app_read(wks, &(cmd->m_R_cmd));
 			break;
 		case CT_WRITE:
-			app_write(&wks, &(cmd.m_W_cmd));
+			app_write(wks, &(cmd->m_W_cmd));
 			break;
 		case CT_DUMP_MEMORY:
-			app_dump_memory(&wks, &(cmd.m_DM_cmd));
+			app_dump_memory(wks, &(cmd->m_DM_cmd));
 			break;
 		case CT_DESTROY_HEAP:
-			app_destroy_heap(&wks, &(cmd.m_DH_cmd));
-			should_run = 0;
-			break;
+			app_destroy_heap(wks, &(cmd->m_DH_cmd));
+			return 0;
 		}
-	}
 
+	return 1;
+}
+
+void app_main_loop() {
+	s_workspace_t wks;
+	u_command_t cmd;
+
+	char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE];
+	app_init_input_buffer(buffer);
+
+	while (app_tick(&wks, &cmd, buffer));
 }
 
 #endif // APP_MANAGER_H__

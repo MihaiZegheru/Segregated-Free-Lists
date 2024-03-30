@@ -1,7 +1,12 @@
 #ifndef MACROS_DEFINITIONS_H__
 #define MACROS_DEFINITIONS_H__
 
-#define FAILED_TO_ALLOCATE "Failed to allocate memory."
+#define MALLOC_FAILED "Failed to alloc memory\n"
+#define FAILED_TO_ALLOCATE "Out of memory\n"
+#define INVALID_FREE "Invalid free\n"
+#define SEG_FAULT "Segmentation fault (core dumped)\n"
+#define INVALID_READ "Memory has not been written\n"
+#define INDEX_OUT_OF_RANGE "Index out of range\n"
 
 #ifndef DIE
 #include <errno.h>

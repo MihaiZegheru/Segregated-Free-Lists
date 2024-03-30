@@ -21,10 +21,6 @@ s_sf_lists_t *sf_lists_create(size_t size, size_t lists_size, size_t virtual_add
         int8_t should_reconstitute);
 void sf_lists_destroy(s_sf_lists_t *sf_lists);
 
-// static void sf_list_insert_and_join(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
-
-// }
-
 uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node);
 e_error_type_t sf_lists_top(s_sf_lists_t *sf_list, s_node_t **out_node,
 		size_t *out_node_size, size_t data_size);

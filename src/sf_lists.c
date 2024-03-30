@@ -4,13 +4,13 @@ s_sf_lists_t *sf_lists_create(size_t size, size_t lists_size, size_t virtual_add
         int8_t should_reconstitute) {
 
     s_sf_lists_t *sf_lists = (s_sf_lists_t *) malloc(sizeof(s_sf_lists_t));
-    DIE(sf_lists == NULL, FAILED_TO_ALLOCATE);
+    DIE(sf_lists == NULL, MALLOC_FAILED);
 
 	sf_lists->m_size = (1ull << (size + 2)) + 1;
 
     sf_lists->m_dll_array = (s_doubly_linked_list_t **) malloc(sf_lists->m_size *
             sizeof(s_doubly_linked_list_t *));
-    DIE(sf_lists->m_dll_array == NULL, FAILED_TO_ALLOCATE);
+    DIE(sf_lists->m_dll_array == NULL, MALLOC_FAILED);
 
     for (size_t i = 0; i < sf_lists->m_size; i++) {
         sf_lists->m_dll_array[i] = dll_create(i);
@@ -19,7 +19,7 @@ s_sf_lists_t *sf_lists_create(size_t size, size_t lists_size, size_t virtual_add
     sf_lists->m_lists_size = lists_size;
     sf_lists->m_virtual_addr = virtual_addr;
     sf_lists->m_should_reconstitute = should_reconstitute;
-	// printf("HELLO\n");
+
     return sf_lists;
 }
 
@@ -29,21 +29,14 @@ void sf_lists_destroy(s_sf_lists_t *sf_lists) {
     }
 	free(sf_lists->m_dll_array);
     free(sf_lists);
-	// printf("BYE\n");
 }
 
-// static void sf_list_insert_and_join(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
-
-// }
-// int count = 0;
 uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
 	if (!sf_lists->m_should_reconstitute) {
 		dll_insert_by_addr(sf_lists->m_dll_array[data_size], node);
 		return 0;
 	}
 	size_t tag = node->m_tag;
-
-	// when it s in the middle?
 
 	s_doubly_linked_list_t *dll;
 	s_node_t *other_node;
@@ -70,9 +63,6 @@ uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node
 			node_destory(other_node);
 			i = 0;
 			continue;
-			// count++;
-
-			// dll_insert_by_addr(sf_lists->m_dll_array[new_size], node);
 		}
 
 		other_node = dll_remove_prev(dll, tag, node->m_virtual_addr);
@@ -94,14 +84,11 @@ uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node
 			node_destory(other_node);
 			i = 0;
 			continue;
-			// count++;
-
-			// dll_insert_by_addr(sf_lists->m_dll_array[new_size], node);
 		}
 	}
 
 	dll_insert_by_addr(sf_lists->m_dll_array[node->m_size], node);
-	// printf("%lld\n", count);
+
 	return found;
 }
 
@@ -110,7 +97,7 @@ e_error_type_t sf_lists_top(s_sf_lists_t *sf_lists, s_node_t **out_node,
 
     s_doubly_linked_list_t *dll;
     s_node_t *node;
-	// printf("%lu %lu\n", data_size, sf_lists->m_size);
+
     for (size_t i = data_size; i < sf_lists->m_size; i++) {
         dll = sf_lists->m_dll_array[i];
         node = dll_remove_first(dll);
@@ -123,12 +110,10 @@ e_error_type_t sf_lists_top(s_sf_lists_t *sf_lists, s_node_t **out_node,
     }
 
     return ET_EMPTY;
-    // CHECK IF NULL
 }
 
 e_error_type_t sf_list_remove_by_addr(s_sf_lists_t *sf_lists, s_node_t **out_node,
 		size_t *out_node_size, size_t addr) {
-	// check if addr is null and remove
 
 	s_doubly_linked_list_t *dll;
     s_node_t *node;

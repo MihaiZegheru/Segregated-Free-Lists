@@ -2,7 +2,8 @@
 
 s_doubly_linked_list_t *dll_create(size_t data_size) {
 	s_doubly_linked_list_t *dll = malloc(sizeof(s_doubly_linked_list_t));
-	// check if it did
+	DIE(dll == NULL, FAILED_TO_ALLOCATE);
+
 	dll->m_head = NULL;
 	dll->m_data_size = data_size;
 	dll->m_size = 0;
@@ -56,8 +57,6 @@ s_node_t *dll_get_node(s_doubly_linked_list_t *dll, size_t pos) {
 }
 
 void dll_insert_first(s_doubly_linked_list_t *dll, s_node_t *node) {
-	// s_node_t *new_node = node_create(dll->m_data_size, data);
-
 	node->m_next = dll->m_head;
 	if (dll->m_size != 0) {
 		dll->m_head->m_prev = node;
@@ -69,10 +68,7 @@ void dll_insert_first(s_doubly_linked_list_t *dll, s_node_t *node) {
 }
 
 void dll_insert_last(s_doubly_linked_list_t *dll, s_node_t *node) {
-	// s_node_t *new_node = node_create(dll->m_data_size, data);
-
 	s_node_t *curr_node = dll_get_node(dll, dll->m_size - 1);
-	// DIE(curr_node == NULL, "Index out of range");
 
 	if (dll->m_size == 0) {
 		dll->m_head = node;
@@ -96,10 +92,8 @@ void dll_insert(s_doubly_linked_list_t *dll, size_t pos, s_node_t *node) {
 		return;
 	}
 
-	// s_node_t *new_node = node_create(dll->m_data_size, data);
-
 	s_node_t *curr_node = dll_get_node(dll, pos);
-	DIE(curr_node == NULL, "Index out of range");
+	DIE(curr_node == NULL, INDEX_OUT_OF_RANGE);
 
 	curr_node->m_prev->m_next = node;
 	node->m_prev = curr_node->m_prev;
@@ -109,12 +103,6 @@ void dll_insert(s_doubly_linked_list_t *dll, size_t pos, s_node_t *node) {
 
 	dll->m_size++;
 }
-
-// void dll_insert_node(s_doubly_linked_list_t *dll, s_node_t *node, size_t pos) {
-// 	dll_insert(dll, pos, node->m_data);
-
-// 	node_destory(node);
-// }
 
 void dll_insert_by_addr(s_doubly_linked_list_t *dll, s_node_t *node) {
 	if (dll_is_empty(dll)) {
@@ -169,7 +157,7 @@ s_node_t *dll_remove_last(s_doubly_linked_list_t *dll) {
 	}
 
 	s_node_t *node = dll_get_node(dll, dll->m_size - 1);
-	DIE(node == NULL, "Index out of range");
+	DIE(node == NULL, INDEX_OUT_OF_RANGE);
 
 	if (node == dll->m_head) {
 		dll->m_head = NULL;
@@ -184,7 +172,6 @@ s_node_t *dll_remove_last(s_doubly_linked_list_t *dll) {
 }
 
 s_node_t *dll_remove(s_doubly_linked_list_t *dll, size_t pos) {
-	// printf("\nPOS: %lld\n", pos);
 	if (pos == 0) {
 		return dll_remove_first(dll);
 	}
@@ -193,7 +180,7 @@ s_node_t *dll_remove(s_doubly_linked_list_t *dll, size_t pos) {
 	}
 
 	s_node_t *node = dll_get_node(dll, pos);
-	DIE(node == NULL, "Index out of range");
+	DIE(node == NULL, INDEX_OUT_OF_RANGE);
 
 	node->m_prev->m_next = node->m_next;
 	node->m_next->m_prev = node->m_prev;
@@ -216,7 +203,6 @@ s_node_t *dll_remove_by_addr(s_doubly_linked_list_t *dll, size_t addr) {
 		idx++;
 	}
 
-	// printf("\n%lu %lu\n", dll->m_data_size, dll->m_size);
 	if (curr_node->m_virtual_addr == addr) {
 		return dll_remove(dll, idx);
 	}
