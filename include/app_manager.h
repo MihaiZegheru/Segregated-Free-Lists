@@ -79,7 +79,12 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 		// Insert allocated node
 		// sf_lists_insert(wks->sfl_dest, cmd->m_size, node);
 		dll_insert_by_addr(wks->dll_dest, node);
-		dll_insert_by_size(wks->dll_dest_by_size, node);
+
+
+		s_node_t *new_size_node = node_create(0, node->m_virtual_addr,
+				node->m_tag, node->m_size, NULL);
+		dll_insert_by_size(wks->dll_dest_by_size, new_size_node);
+
 		// Insert remainder node
 		sf_lists_insert(wks->sfl_src, new_size, new_node);
 
@@ -89,7 +94,11 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 		// Insert the whole node
 		// sf_lists_insert(wks->sfl_dest, node_size, node);
 		dll_insert_by_addr(wks->dll_dest, node);
-		dll_insert_by_size(wks->dll_dest_by_size, node);
+
+		s_node_t *new_size_node = node_create(0, node->m_virtual_addr,
+				node->m_tag, node->m_size, NULL);
+		dll_insert_by_size(wks->dll_dest_by_size, new_size_node);
+
 		wks->m_stats.m_num_free_blocks -= 1;
 	}
 
@@ -105,13 +114,14 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 	// change die in err
     // DIE(sf_list_remove_by_addr(wks->sfl_dest, &node, &node_size, cmd->m_addr) == ET_INVALID_FREE,
 	// 		"Didnt find");
-
 	node = dll_remove_by_addr(wks->dll_dest, cmd->m_addr);
 	if (node == NULL) {
 		printf("Invalid free\n");
 		return;
 	}
-	dll_remove_by_addr(wks->dll_dest_by_size, cmd->m_addr);
+
+	s_node_t *node_by_size = dll_remove_by_addr(wks->dll_dest_by_size, cmd->m_addr); // th is should be here
+	free(node_by_size);
 
 	// printf("%lu\n", node->m_virtual_addr);
 	wks->m_stats.m_total_alloc_mem -= node->m_size;

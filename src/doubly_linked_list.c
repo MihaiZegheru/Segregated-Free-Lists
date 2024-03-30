@@ -183,10 +183,10 @@ s_node_t *dll_remove_last(s_doubly_linked_list_t *dll) {
 }
 
 s_node_t *dll_remove(s_doubly_linked_list_t *dll, size_t pos) {
+	// printf("\nPOS: %lld\n", pos);
 	if (pos == 0) {
 		return dll_remove_first(dll);
 	}
-
 	if (pos == dll->m_size - 1) {
 		return dll_remove_last(dll);
 	}
@@ -206,12 +206,14 @@ s_node_t *dll_remove_by_addr(s_doubly_linked_list_t *dll, size_t addr) {
 	}
 
 	s_node_t *curr_node = dll->m_head;
+	curr_node = dll->m_head;
 	size_t idx = 0;
 
 	while (idx < dll->m_size - 1 && curr_node->m_virtual_addr != addr) {
-		curr_node = curr_node->m_next;
+		curr_node = (s_node_t *) curr_node->m_next;
 		idx++;
 	}
+
 	// printf("\n%lu %lu\n", dll->m_data_size, dll->m_size);
 	if (curr_node->m_virtual_addr == addr) {
 		return dll_remove(dll, idx);
