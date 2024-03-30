@@ -37,7 +37,9 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
     s_node_t *node;
 	size_t node_size;
 
-	if (sf_lists_top(wks->sfl_src, &node, &node_size, cmd->m_size) == ET_EMPTY) {
+	if (sf_lists_top(wks->sfl_src, &node, &node_size, cmd->m_size) ==
+					 ET_EMPTY) {
+
 		printf(FAILED_TO_ALLOCATE);
 		return;
 	}
@@ -51,7 +53,8 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd) {
 		node->m_size = cmd->m_size;
 
 		// Keep the same node tag for rejoining and add new size
-		s_node_t *new_node = node_create(0, new_addr, node->m_tag, new_size, NULL, 1);
+		s_node_t *new_node = node_create(0, new_addr, node->m_tag, new_size,
+										 NULL, 1);
 		new_node->m_data = (char *) node->m_data + cmd->m_size;
 
 		// Insert allocated node
@@ -92,12 +95,10 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd) {
 	wks->m_stats.m_num_free_calls++;
 
 	uint8_t joined = sf_lists_insert(wks->sfl_src, node->m_size, node);
-	if (joined) {
+	if (joined)
 		wks->m_stats.m_num_free_blocks -= joined - 1;
-	}
-	else {
+	else
 		wks->m_stats.m_num_free_blocks++;
-	}
 }
 
 void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
@@ -110,7 +111,9 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 	s_node_t *curr_node = dll->m_head;
 	size_t idx = 0;
 
-	while (idx < dll->m_size - 1 && cmd->m_src - curr_node->m_virtual_addr >= curr_node->m_size) {
+	while (idx < dll->m_size - 1 &&
+		   cmd->m_src - curr_node->m_virtual_addr >= curr_node->m_size) {
+
 		curr_node = curr_node->m_next;
 		idx++;
 	}
@@ -123,10 +126,13 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 	}
 
 	s_node_t *starting_node = curr_node;
-	int64_t left_size = (int64_t)cmd->m_size - (curr_node->m_size - (cmd->m_src - curr_node->m_virtual_addr));
+	int64_t left_size = (int64_t)cmd->m_size -
+						(curr_node->m_size -
+						(cmd->m_src - curr_node->m_virtual_addr));
 
 	while (idx < dll->m_size - 1 && left_size > 0) {
-		if (curr_node->m_virtual_addr + curr_node->m_size != curr_node->m_next->m_virtual_addr) {
+		if (curr_node->m_virtual_addr + curr_node->m_size !=
+			curr_node->m_next->m_virtual_addr) {
 			break;
 		}
 		curr_node = curr_node->m_next;
@@ -174,11 +180,11 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	size_t idx = 0;
 
 	size_t actual_size = strlen(cmd->m_src);
-	if (actual_size < cmd->m_size) {
+	if (actual_size < cmd->m_size)
 		cmd->m_size = actual_size;
-	}
 
-	while (idx < dll->m_size - 1 && cmd->m_dest - curr_node->m_virtual_addr >= curr_node->m_size) {
+	while (idx < dll->m_size - 1 && cmd->m_dest - curr_node->m_virtual_addr >=
+		   curr_node->m_size) {
 		curr_node = curr_node->m_next;
 		idx++;
 	}
@@ -192,12 +198,16 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	}
 
 	s_node_t *starting_node = curr_node;
-	int64_t left_size = (int64_t)cmd->m_size - (curr_node->m_size - (cmd->m_dest - curr_node->m_virtual_addr));
+	int64_t left_size = (int64_t)cmd->m_size -
+						(curr_node->m_size -
+						(cmd->m_dest - curr_node->m_virtual_addr));
 
 	while (idx < dll->m_size - 1 && left_size > 0) {
-		if (curr_node->m_virtual_addr + curr_node->m_size != curr_node->m_next->m_virtual_addr) {
+		if (curr_node->m_virtual_addr + curr_node->m_size !=
+			curr_node->m_next->m_virtual_addr) {
 			break;
 		}
+
 		curr_node = curr_node->m_next;
 		left_size -= curr_node->m_size;
 		idx++;
@@ -218,9 +228,8 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	for (size_t j = offset; idx < cmd->m_size && j < curr_node->m_size &&
 			!string_utils_is_end_char(cmd->m_src[idx]); j++) {
 
-		if (cmd->m_src[idx] == '\"') {
+		if (cmd->m_src[idx] == '\"')
 			continue;
-		}
 
 		*((char *)curr_node->m_data + j) = cmd->m_src[idx];
 		idx++;
@@ -228,10 +237,12 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 
 	curr_node = curr_node->m_next;
 	while (idx < cmd->m_size && !string_utils_is_end_char(cmd->m_src[idx])) {
-		for (size_t j = 0; j < curr_node->m_size && !string_utils_is_end_char(cmd->m_src[idx]); j++) {
-			if (cmd->m_src[idx] == '\"') {
+		for (size_t j = 0; j < curr_node->m_size &&
+			 !string_utils_is_end_char(cmd->m_src[idx]); j++) {
+
+			if (cmd->m_src[idx] == '\"')
 				continue;
-			}
+
 			*((char *)curr_node->m_data + j) = cmd->m_src[idx];
 			idx++;
 		}
@@ -241,21 +252,21 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 
 void app_dump_memory(s_workspace_t *wks) {
 	printf("+++++DUMP+++++\n");
-
 	printf("Total memory: %ld bytes\n", wks->m_stats.m_total_mem);
-	printf("Total allocated memory: %ld bytes\n", wks->m_stats.m_total_alloc_mem);
+	printf("Total allocated memory: %ld bytes\n",
+		   wks->m_stats.m_total_alloc_mem);
 	printf("Total free memory: %ld bytes\n", wks->m_stats.m_total_mem -
-			wks->m_stats.m_total_alloc_mem);
+		   wks->m_stats.m_total_alloc_mem);
 	printf("Free blocks: %ld\n", wks->m_stats.m_num_free_blocks);
-	printf("Number of allocated blocks: %ld\n", wks->m_stats.m_num_alloc_blocks);
+	printf("Number of allocated blocks: %ld\n",
+		   wks->m_stats.m_num_alloc_blocks);
 	printf("Number of malloc calls: %ld\n", wks->m_stats.m_num_malloc_calls);
 	printf("Number of fragmentations: %ld\n", wks->m_stats.m_num_frag);
 	printf("Number of free calls: %ld\n", wks->m_stats.m_num_free_calls);
 
 	for (size_t i = 0; i < wks->sfl_src->m_size; i++) {
-		if (wks->sfl_src->m_dll_array[i]->m_size == 0) {
+		if (wks->sfl_src->m_dll_array[i]->m_size == 0)
 			continue;
-		}
 
 		s_doubly_linked_list_t *dll = wks->sfl_src->m_dll_array[i];
 		size_t count = dll->m_size;
@@ -294,15 +305,17 @@ void app_destroy_heap(s_workspace_t *wks) {
 	sf_lists_destroy(wks->sfl_src);
 }
 
-static void app_init_input_buffer(char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]) {
-	for (size_t i = 0; i < MAX_COMMAND_PARAMS; i++) {
-		for (size_t j = 0; j < MAX_LINE_SIZE; j++) {
+static void app_init_input_buffer
+		(char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]) {
+
+	for (size_t i = 0; i < MAX_COMMAND_PARAMS; i++)
+		for (size_t j = 0; j < MAX_LINE_SIZE; j++)
 			buffer[i][j] = '\0';
-		}
-	}
 }
 
-uint8_t app_tick(s_workspace_t *wks, u_command_t *cmd, char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]) {
+uint8_t app_tick(s_workspace_t *wks, u_command_t *cmd,
+				 char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]) {
+
 		command_read(cmd, buffer);
 
 		switch(cmd->m_default_cmd.command_type) {

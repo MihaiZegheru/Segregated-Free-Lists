@@ -22,7 +22,7 @@ void app_dump_memory(s_workspace_t *wks);
 void app_destroy_heap(s_workspace_t *wks);
 
 __u8 app_tick(s_workspace_t *wks, u_command_t *cmd,
-		char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
+			  char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
 void app_main_loop();
 
 #endif // APP_MANAGER_H__

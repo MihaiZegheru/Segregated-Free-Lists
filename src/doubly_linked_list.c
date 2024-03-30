@@ -72,8 +72,7 @@ void dll_insert_last(s_doubly_linked_list_t *dll, s_node_t *node) {
 
 	if (dll->m_size == 0) {
 		dll->m_head = node;
-	}
-	else {
+	} else {
 		curr_node->m_next = node;
 	}
 	node->m_prev = curr_node;
@@ -113,7 +112,9 @@ void dll_insert_by_addr(s_doubly_linked_list_t *dll, s_node_t *node) {
 	s_node_t *curr_node = dll->m_head;
 	size_t idx = 0;
 
-	while (idx < dll->m_size && curr_node->m_virtual_addr < node->m_virtual_addr) {
+	while (idx < dll->m_size &&
+		   curr_node->m_virtual_addr < node->m_virtual_addr) {
+
 		curr_node = curr_node->m_next;
 		idx++;
 	}
@@ -226,7 +227,9 @@ s_node_t *dll_remove_prev(s_doubly_linked_list_t *dll, size_t tag,
 		idx++;
 	}
 
-	if (curr_node->m_tag == tag && curr_node->m_virtual_addr + curr_node->m_size == curr_addr) {
+	if (curr_node->m_tag == tag &&
+		curr_node->m_virtual_addr + curr_node->m_size == curr_addr) {
+
 		return dll_remove(dll, idx);
 	}
 
@@ -236,9 +239,8 @@ s_node_t *dll_remove_prev(s_doubly_linked_list_t *dll, size_t tag,
 s_node_t *dll_remove_next(s_doubly_linked_list_t *dll, size_t tag,
 		size_t next_addr) {
 
-	if (dll_is_empty(dll)) {
+	if (dll_is_empty(dll))
 		return NULL;
-	}
 
 	s_node_t *curr_node = dll->m_head;
 	size_t idx = 0;
@@ -249,10 +251,8 @@ s_node_t *dll_remove_next(s_doubly_linked_list_t *dll, size_t tag,
 		idx++;
 	}
 
-	if (curr_node->m_tag == tag && curr_node->m_virtual_addr == next_addr) {
+	if (curr_node->m_tag == tag && curr_node->m_virtual_addr == next_addr)
 		return dll_remove(dll, idx);
-	}
 
 	return NULL;
 }
-

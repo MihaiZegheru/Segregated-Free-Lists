@@ -13,5 +13,4 @@ size_t string_utils_addr_to_uint(char *addr);
 size_t string_utils_str_to_uint(char *str);
 int64_t string_utils_str_to_int(char *str);
 
-
 #endif // STRING_UTILS_H__

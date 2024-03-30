@@ -85,6 +85,6 @@ size_t command_definitions_get_number_of_params(e_command_type_t command_type);
 e_command_type_t command_definitions_get_command_type(char *name);
 
 void command_definitions_construct_command(u_command_t *ptr,
-		char buffer[][MAX_LINE_SIZE]);
+										   char buffer[][MAX_LINE_SIZE]);
 
 #endif // COMMAND_DEFINITIONS_H__

@@ -1,9 +1,9 @@
 #include <string_utils.h>
 
 int8_t string_utils_is_end_char(char c) {
-	if (c == '\0' || c == '\n') {
+	if (c == '\0' || c == '\n')
 		return 1;
-	}
+
 	return 0;
 }
 
@@ -18,9 +18,9 @@ size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE]) {
 	size_t last_idx = -1;
 
 	while (!string_utils_is_end_char(str[str_idx])) {
-		if (str[str_idx] == '\"') {
+		if (str[str_idx] == '\"')
 			last_idx = str_idx;
-		}
+
 		str_idx++;
 	}
 
@@ -30,13 +30,10 @@ size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE]) {
 			is_quote = 1;
 			str_idx++;
 			continue;
-		}
-		else if (str[str_idx] == '\"' && str_idx == last_idx) {
+		} else if (str[str_idx] == '\"' && str_idx == last_idx)
 			is_quote = 0;
-		}
-		else {
+		else
 			buffer[word_count][word_idx] = str[str_idx];
-		}
 
 		str_idx++;
 		word_idx++;
@@ -57,9 +54,8 @@ size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE]) {
 }
 
 size_t string_utils_addr_to_uint(char *addr) {
-	if (addr[0] != '0' || (addr[1] != 'x' && addr[1] != 'X')) {
+	if (addr[0] != '0' || (addr[1] != 'x' && addr[1] != 'X'))
 		return -1;
-	}
 
 	addr += 2;
 
