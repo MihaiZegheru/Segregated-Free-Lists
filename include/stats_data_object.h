@@ -4,6 +4,10 @@
 #include <inttypes.h>
 #include <stddef.h>
 
+/**
+ * @brief Statistics for performing DUMP_MEMORY.
+ *
+ */
 typedef struct {
 	size_t m_total_mem;
 	size_t m_total_alloc_mem;

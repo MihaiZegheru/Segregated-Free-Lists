@@ -1,6 +1,10 @@
 #ifndef COMMAND_TYPE_H__
 #define COMMAND_TYPE_H__
 
+/**
+ * @brief Defines all the commands that can be called by the user.
+ *
+ */
 typedef enum {
 	CT_NONE,
 	CT_INIT_HEAP,

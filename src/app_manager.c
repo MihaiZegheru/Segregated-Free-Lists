@@ -1,6 +1,80 @@
 #include <app_manager.h>
 
-void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd)
+/**
+ * @brief Initialise the heap and the stats
+ *
+ * @param wks
+ * @param cmd
+ */
+static void e_app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd);
+
+/**
+ * @brief Allocate a node. This removes it from the heap and adds it to the
+ * allocated nodes list.
+ *
+ * @param wks
+ * @param cmd
+ */
+static void e_app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd);
+
+/**
+ * @brief Frees a node. This removes it from the allocated nodes list and pushes
+ * it back in the heap.
+ *
+ * @param wks
+ * @param cmd
+ *
+ * @note If should_reconstitude is set to true, the nodes will join back into
+ * their initial form. Otherwise they will stay fragmented.
+ */
+static void e_app_free_node(s_workspace_t *wks, s_command_F_t *cmd);
+
+/**
+ * @brief Read from the provided address in the list of allocated nodes. Can
+ * read from multiple nodes if they are contiguously allocated.
+ *
+ * @param wks
+ * @param cmd
+ */
+static void e_app_read(s_workspace_t *wks, s_command_R_t *cmd);
+
+/**
+ * @brief Write a number of bytes at the provided address in the list of
+ * allocated nodes. Can write to multiple nodes if they are contiguously
+ * allocated.
+ *
+ * @param wks
+ * @param cmd
+ */
+static void e_app_write(s_workspace_t *wks, s_command_W_t *cmd);
+
+/**
+ * @brief Creates a dump of the existing memory. This will provide insight into
+ * how the heap and allocated nodes are organised.
+ *
+ * @param wks
+ */
+static void e_app_dump_memory(s_workspace_t *wks);
+
+/**
+ * @brief Free all allocated memory
+ *
+ * @param wks
+ */
+static void e_app_destroy_heap(s_workspace_t *wks);
+
+/**
+ * @brief App tick
+ *
+ * @param wks
+ * @param cmd
+ * @param buffer
+ * @return __u8
+ */
+static __u8 e_app_tick(s_workspace_t *wks, u_command_t *cmd,
+			  char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
+
+static void e_app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd)
 {
 	wks->sfl_src = sf_lists_create(cmd->m_list_count, cmd->m_list_size,
 								   cmd->m_heap_start_addr,
@@ -35,7 +109,7 @@ void app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd)
 	}
 }
 
-void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd)
+static void e_app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd)
 {
 	s_node_t *node;
 	size_t node_size;
@@ -82,7 +156,7 @@ void app_malloc_node(s_workspace_t *wks, s_command_M_t *cmd)
 	wks->m_stats.m_num_malloc_calls++;
 }
 
-void app_free_node(s_workspace_t *wks, s_command_F_t *cmd)
+static void e_app_free_node(s_workspace_t *wks, s_command_F_t *cmd)
 {
 	s_node_t *node;
 
@@ -103,7 +177,7 @@ void app_free_node(s_workspace_t *wks, s_command_F_t *cmd)
 		wks->m_stats.m_num_free_blocks++;
 }
 
-void app_read(s_workspace_t *wks, s_command_R_t *cmd)
+static void e_app_read(s_workspace_t *wks, s_command_R_t *cmd)
 {
 	if (dll_is_empty(wks->dll_dest)) {
 		printf(INVALID_READ);
@@ -122,8 +196,8 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd)
 
 	if (cmd->m_src - curr_node->m_virtual_addr >= curr_node->m_size) {
 		printf(SEG_FAULT);
-		app_dump_memory(wks);
-		app_destroy_heap(wks);
+		e_app_dump_memory(wks);
+		e_app_destroy_heap(wks);
 		exit(0);
 	}
 
@@ -144,8 +218,8 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd)
 
 	if (left_size > 0) {
 		printf(SEG_FAULT);
-		app_dump_memory(wks);
-		app_destroy_heap(wks);
+		e_app_dump_memory(wks);
+		e_app_destroy_heap(wks);
 		exit(0);
 		return;
 	}
@@ -170,7 +244,7 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd)
 	printf("\n");
 }
 
-void app_write(s_workspace_t *wks, s_command_W_t *cmd)
+static void e_app_write(s_workspace_t *wks, s_command_W_t *cmd)
 {
 	if (dll_is_empty(wks->dll_dest)) {
 		printf(INVALID_READ);
@@ -193,8 +267,8 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd)
 
 	if (cmd->m_dest - curr_node->m_virtual_addr >= curr_node->m_size) {
 		printf(SEG_FAULT);
-		app_dump_memory(wks);
-		app_destroy_heap(wks);
+		e_app_dump_memory(wks);
+		e_app_destroy_heap(wks);
 		exit(0);
 		return;
 	}
@@ -217,8 +291,8 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd)
 
 	if (left_size > 0) {
 		printf(SEG_FAULT);
-		app_dump_memory(wks);
-		app_destroy_heap(wks);
+		e_app_dump_memory(wks);
+		e_app_destroy_heap(wks);
 		exit(0);
 		return;
 	}
@@ -250,7 +324,7 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd)
 	}
 }
 
-void app_dump_memory(s_workspace_t *wks)
+static void e_app_dump_memory(s_workspace_t *wks)
 {
 	printf("+++++DUMP+++++\n");
 	printf("Total memory: %ld bytes\n", wks->m_stats.m_total_mem);
@@ -301,7 +375,7 @@ void app_dump_memory(s_workspace_t *wks)
 	printf("-----DUMP-----\n");
 }
 
-void app_destroy_heap(s_workspace_t *wks)
+static void e_app_destroy_heap(s_workspace_t *wks)
 {
 	dll_destroy(wks->dll_dest);
 	sf_lists_destroy(wks->sfl_src);
@@ -315,7 +389,7 @@ static void e_app_init_input_buffer
 			buffer[i][j] = '\0';
 }
 
-uint8_t app_tick(s_workspace_t *wks, u_command_t *cmd,
+static uint8_t e_app_tick(s_workspace_t *wks, u_command_t *cmd,
 				 char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE])
 {
 		command_read(cmd, buffer);

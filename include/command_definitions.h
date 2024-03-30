@@ -71,6 +71,11 @@ typedef struct {
 	e_command_type_t command_type;
 } s_default_command_t;
 
+/**
+ * @brief The command_data defines the data of a command within an union so that
+ *		  all commands cand have a base object type that they can be stored in.
+ *
+ */
 typedef union {
 	s_default_command_t m_default_cmd;
 	s_command_IH_t m_IH_cmd;
@@ -82,9 +87,28 @@ typedef union {
 	s_command_DH_t m_DH_cmd;
 } u_command_t;
 
+/**
+ * @brief Return the required number of parameters for a command type.
+ *
+ * @param command_type
+ * @return size_t
+ */
 size_t command_definitions_get_number_of_params(e_command_type_t command_type);
+
+/**
+ * @brief Return a command type based on the provided label.
+ *
+ * @param name
+ * @return e_command_type_t
+ */
 e_command_type_t command_definitions_get_command_type(char *name);
 
+/**
+ * @brief Build the command based on the input fields provided as a buffer.
+ *
+ * @param ptr
+ * @param buffer
+ */
 void command_definitions_construct_command(u_command_t *ptr,
 										   char buffer[][MAX_LINE_SIZE]);
 

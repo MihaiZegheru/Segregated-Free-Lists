@@ -1,6 +1,10 @@
 #ifndef ERROR_TYPE_H__
 #define ERROR_TYPE_H__
 
+/**
+ * @brief Defines a list of possible errors.
+ *
+ */
 typedef enum {
 	ET_NONE,
 	ET_INVALID_COMMAND_PARAM,
