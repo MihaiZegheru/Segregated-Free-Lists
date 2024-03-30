@@ -4,7 +4,7 @@
 #include <inttypes.h>
 #include <stddef.h>
 
-#define MAX_LINE_SIZE 100
+#define MAX_LINE_SIZE 605
 
 int8_t string_utils_is_end_char(char c);
 size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE]);

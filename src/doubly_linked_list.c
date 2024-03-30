@@ -27,7 +27,7 @@ void dll_light_destroy(s_doubly_linked_list_t *dll) {
 	s_node_t *next_node;
 	for (size_t i = 0; i < dll->m_size; i++) {
 		next_node = (s_node_t *) curr_node->m_next;
-		node_light_destory(curr_node);
+		node_destory(curr_node);
 		curr_node = next_node;
 	}
 
@@ -72,7 +72,7 @@ void dll_insert_last(s_doubly_linked_list_t *dll, s_node_t *node) {
 	// s_node_t *new_node = node_create(dll->m_data_size, data);
 
 	s_node_t *curr_node = dll_get_node(dll, dll->m_size - 1);
-	DIE(curr_node == NULL, "Index out of range");
+	// DIE(curr_node == NULL, "Index out of range");
 
 	if (dll->m_size == 0) {
 		dll->m_head = node;
