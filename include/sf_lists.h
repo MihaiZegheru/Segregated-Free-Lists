@@ -4,6 +4,7 @@
 #include <inttypes.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <linux/types.h>
 
 #include <doubly_linked_list.h>
 #include <macro_definitions.h>
@@ -21,7 +22,7 @@ s_sf_lists_t *sf_lists_create(size_t size, size_t lists_size, size_t virtual_add
         int8_t should_reconstitute);
 void sf_lists_destroy(s_sf_lists_t *sf_lists);
 
-uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node);
+__u8 sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node);
 e_error_type_t sf_lists_top(s_sf_lists_t *sf_list, s_node_t **out_node,
 		size_t *out_node_size, size_t data_size);
 e_error_type_t sf_list_remove_by_addr(s_sf_lists_t *sf_lists, s_node_t **out_node,

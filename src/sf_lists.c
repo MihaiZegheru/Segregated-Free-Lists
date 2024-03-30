@@ -31,7 +31,7 @@ void sf_lists_destroy(s_sf_lists_t *sf_lists) {
     free(sf_lists);
 }
 
-uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
+__u8 sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node) {
 	if (!sf_lists->m_should_reconstitute) {
 		dll_insert_by_addr(sf_lists->m_dll_array[data_size], node);
 		return 0;
@@ -40,7 +40,7 @@ uint8_t sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node
 
 	s_doubly_linked_list_t *dll;
 	s_node_t *other_node;
-	uint8_t found = 0;
+	__u8 found = 0;
 	for (size_t i = 0; i < sf_lists->m_size; i++) {
 		dll = sf_lists->m_dll_array[i];
 

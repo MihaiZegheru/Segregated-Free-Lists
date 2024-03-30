@@ -13,7 +13,7 @@ size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE]) {
 
 	size_t str_idx = 0;
 	size_t word_idx = 0;
-	uint8_t is_quote = 0;
+	__u8 is_quote = 0;
 
 	size_t last_idx = -1;
 
@@ -65,7 +65,7 @@ size_t string_utils_addr_to_uint(char *addr) {
 
 	int64_t num = 0;
 	while (*addr) {
-		uint8_t byte = *addr;
+		__u8 byte = *addr;
 		addr++;
 
 		if (byte >= '0' && byte <= '9') {

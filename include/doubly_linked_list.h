@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <inttypes.h>
+#include <linux/types.h>
 
 #include <node.h>
 #include <macro_definitions.h>

@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include <stddef.h>
+#include <linux/types.h>
 
 #define MAX_LINE_SIZE 605
 

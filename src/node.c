@@ -1,7 +1,7 @@
 #include <node.h>
 
 s_node_t *node_create(size_t data_size, size_t virtual_addr, size_t tag,
-		size_t size, void *data, uint8_t is_fragment) {
+		size_t size, void *data, __u8 is_fragment) {
 
 	s_node_t *node = (s_node_t *) malloc(sizeof(s_node_t));
 	DIE(node == NULL, FAILED_TO_ALLOCATE);

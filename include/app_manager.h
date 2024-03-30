@@ -5,6 +5,7 @@
 #include <sf_lists.h>
 #include <stats_data_object.h>
 #include <string_utils.h>
+#include <linux/types.h>
 
 typedef struct {
     s_sf_lists_t *sfl_src;
@@ -20,7 +21,7 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd);
 void app_dump_memory(s_workspace_t *wks);
 void app_destroy_heap(s_workspace_t *wks);
 
-uint8_t app_tick(s_workspace_t *wks, u_command_t *cmd,
+__u8 app_tick(s_workspace_t *wks, u_command_t *cmd,
 		char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
 void app_main_loop();
 
