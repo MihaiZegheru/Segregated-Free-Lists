@@ -8,7 +8,7 @@
 #include <linux/types.h>
 
 typedef struct {
-    s_sf_lists_t *sfl_src;
+	s_sf_lists_t *sfl_src;
 	s_doubly_linked_list_t *dll_dest;
 	s_stats_data_object_t m_stats;
 } s_workspace_t;
@@ -23,6 +23,6 @@ void app_destroy_heap(s_workspace_t *wks);
 
 __u8 app_tick(s_workspace_t *wks, u_command_t *cmd,
 			  char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
-void app_main_loop();
+void app_main_loop(void);
 
 #endif // APP_MANAGER_H__

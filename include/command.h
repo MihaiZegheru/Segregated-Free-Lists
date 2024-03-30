@@ -10,7 +10,7 @@
 #include <error_type.h>
 
 e_error_type_t command_factory(u_command_t *ptr, size_t params_num,
-		char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
+							   char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
 
 e_error_type_t command_read(u_command_t *ptr,
 							char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);

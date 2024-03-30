@@ -1,15 +1,15 @@
 #include <sf_lists.h>
 
 s_sf_lists_t *sf_lists_create(size_t size, size_t lists_size,
-							  size_t virtual_addr, int8_t should_reconstitute)
+							  size_t virtual_addr, __s8 should_reconstitute)
 {
-	s_sf_lists_t *sf_lists = (s_sf_lists_t *) malloc(sizeof(s_sf_lists_t));
+	s_sf_lists_t *sf_lists = (s_sf_lists_t *)malloc(sizeof(s_sf_lists_t));
 	DIE(!sf_lists, MALLOC_FAILED);
 
 	sf_lists->m_size = (1ull << (size + 2)) + 1;
 
 	sf_lists->m_dll_array =
-			(s_doubly_linked_list_t **) malloc(sf_lists->m_size *
+			(s_doubly_linked_list_t **)malloc(sf_lists->m_size *
 			sizeof(s_doubly_linked_list_t *));
 
 	DIE(!sf_lists->m_dll_array, MALLOC_FAILED);
@@ -50,7 +50,7 @@ __u8 sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node)
 		other_node = dll_remove_next(dll, tag, node->m_virtual_addr +
 				node->m_size);
 
-		if (other_node != NULL) {
+		if (other_node) {
 			found++;
 			size_t new_addr;
 			if (other_node->m_virtual_addr < node->m_virtual_addr)
@@ -69,14 +69,13 @@ __u8 sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node)
 		}
 
 		other_node = dll_remove_prev(dll, tag, node->m_virtual_addr);
-		if (other_node != NULL) {
+		if (other_node) {
 			found++;
 			size_t new_addr;
 			if (other_node->m_virtual_addr < node->m_virtual_addr)
 				new_addr = other_node->m_virtual_addr;
 			else
 				new_addr = node->m_virtual_addr;
-
 
 			node->m_size = node->m_size + other_node->m_size;
 			node->m_virtual_addr = new_addr;
@@ -95,7 +94,7 @@ __u8 sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node)
 }
 
 e_error_type_t sf_lists_top(s_sf_lists_t *sf_lists, s_node_t **out_node,
-		size_t *out_node_size, size_t data_size)
+							size_t *out_node_size, size_t data_size)
 {
 	s_doubly_linked_list_t *dll;
 	s_node_t *node;

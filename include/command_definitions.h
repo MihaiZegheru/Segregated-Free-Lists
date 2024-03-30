@@ -4,6 +4,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
+#include <linux/types.h>
 
 #include <command_type.h>
 #include <string_utils.h>
@@ -32,7 +33,7 @@ typedef struct {
 	size_t m_heap_start_addr;
 	size_t m_list_count;
 	size_t m_list_size;
-	int8_t m_should_reconstitute;
+	__s8 m_should_reconstitute;
 } s_command_IH_t;
 
 typedef struct {

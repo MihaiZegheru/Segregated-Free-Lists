@@ -44,8 +44,9 @@ e_command_type_t command_definitions_get_command_type(char *name)
 	return CT_NONE;
 }
 
-void command_definitions_construct_command
-		(u_command_t *ptr,char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE])
+void command_definitions_construct_command(u_command_t *ptr,
+										   char buffer[MAX_COMMAND_PARAMS]
+										   [MAX_LINE_SIZE])
 {
 	e_command_type_t command_type = ptr->m_default_cmd.command_type;
 

@@ -11,15 +11,15 @@
 #include <error_type.h>
 
 typedef struct {
-    s_doubly_linked_list_t **m_dll_array;
-    size_t m_size;
-    size_t m_lists_size;
-    size_t m_virtual_addr;
-    int8_t m_should_reconstitute;
+	s_doubly_linked_list_t **m_dll_array;
+	size_t m_size;
+	size_t m_lists_size;
+	size_t m_virtual_addr;
+	__s8 m_should_reconstitute;
 } s_sf_lists_t;
 
 s_sf_lists_t *sf_lists_create(size_t size, size_t lists_size,
-							  size_t virtual_addr, int8_t should_reconstitute);
+							  size_t virtual_addr, __s8 should_reconstitute);
 void sf_lists_destroy(s_sf_lists_t *sf_lists);
 
 __u8 sf_lists_insert(s_sf_lists_t *sf_lists, size_t data_size, s_node_t *node);
