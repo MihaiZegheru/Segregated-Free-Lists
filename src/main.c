@@ -5,7 +5,7 @@
 
 int main(void) {
 
-	setbuf(stdout, NULL);
+	// setbuf(stdout, NULL);
 	// printf("Hello world!");
 
 	// u_command_t cmd;
