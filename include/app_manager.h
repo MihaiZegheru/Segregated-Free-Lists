@@ -168,6 +168,7 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 	if (cmd->m_src - curr_node->m_virtual_addr >= curr_node->m_size) {
 		printf("Segmentation fault (core dumped)\n");
 		app_dump_memory(wks, NULL);
+		exit(0);
 		return;
 	}
 
@@ -192,6 +193,7 @@ void app_read(s_workspace_t *wks, s_command_R_t *cmd) {
 		// err cuz invalid address
 		printf("Segmentation fault (core dumped)\n");
 		app_dump_memory(wks, NULL);
+		exit(0);
 		return;
 	}
 
@@ -243,6 +245,7 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 	if (cmd->m_dest - curr_node->m_virtual_addr >= curr_node->m_size) {
 		printf("Segmentation fault (core dumped)\n");
 		app_dump_memory(wks, NULL);
+		exit(0);
 		return;
 	}
 
@@ -267,6 +270,7 @@ void app_write(s_workspace_t *wks, s_command_W_t *cmd) {
 		// err cuz invalid address
 		printf("Segmentation fault (core dumped)\n");
 		app_dump_memory(wks, NULL);
+		exit(0);
 		return;
 	}
 

@@ -1,5 +1,6 @@
 #include <string_utils.h>
 #include <stdio.h>
+#include <string.h>
 
 int8_t string_utils_is_end_char(char c) {
 	if (c == '\0' || c == '\n') {
@@ -15,13 +16,24 @@ size_t string_utils_split(char *str, char split, char buffer[][MAX_LINE_SIZE]) {
 	size_t str_idx = 0;
 	size_t word_idx = 0;
 	uint8_t is_quote = 0;
+
+	size_t last_idx = -1;
+
+	while (!string_utils_is_end_char(str[str_idx])) {
+		if (str[str_idx] == '\"') {
+			last_idx = str_idx;
+		}
+		str_idx++;
+	}
+
+	str_idx = 0;
 	while (!string_utils_is_end_char(str[str_idx])) {
 		if (str[str_idx] == '\"' && !is_quote) {
 			is_quote = 1;
 			str_idx++;
 			continue;
 		}
-		else if (str[str_idx] == '\"') {
+		else if (str[str_idx] == '\"' && str_idx == last_idx) {
 			is_quote = 0;
 		}
 		else {
