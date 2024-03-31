@@ -38,7 +38,7 @@ typedef struct s_node_t {
 	 * @brief Wether the node is a fragment.
 	 *
 	 */
-	__u8 m_is_fragment
+	__u8 m_is_fragment;
 	/**
 	 * @brief Pointer to previous node.
 	 *

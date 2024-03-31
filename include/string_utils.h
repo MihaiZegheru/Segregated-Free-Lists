@@ -43,9 +43,9 @@ size_t string_utils_str_to_uint(char *str);
 
 /**
  * @brief Converts a string to int.
- * 
- * @param str 
- * @return __s64 
+ *
+ * @param str
+ * @return __s64
  */
 __s64 string_utils_str_to_int(char *str);
 

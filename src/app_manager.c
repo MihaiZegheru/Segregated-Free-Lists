@@ -72,7 +72,7 @@ static void e_app_destroy_heap(s_workspace_t *wks);
  * @return __u8
  */
 static __u8 e_app_tick(s_workspace_t *wks, u_command_t *cmd,
-			  char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
+					   char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE]);
 
 static void e_app_init_sf_list(s_workspace_t *wks, s_command_IH_t *cmd)
 {
@@ -390,7 +390,7 @@ static void e_app_init_input_buffer
 }
 
 static uint8_t e_app_tick(s_workspace_t *wks, u_command_t *cmd,
-				 char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE])
+						  char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE])
 {
 		command_read(cmd, buffer);
 
@@ -398,25 +398,25 @@ static uint8_t e_app_tick(s_workspace_t *wks, u_command_t *cmd,
 		case CT_NONE:
 			break;
 		case CT_INIT_HEAP:
-			app_init_sf_list(wks, &cmd->m_IH_cmd);
+			e_app_init_sf_list(wks, &cmd->m_IH_cmd);
 			break;
 		case CT_MALLOC:
-			app_malloc_node(wks, &cmd->m_M_cmd);
+			e_app_malloc_node(wks, &cmd->m_M_cmd);
 			break;
 		case CT_FREE:
-			app_free_node(wks, &cmd->m_F_cmd);
+			e_app_free_node(wks, &cmd->m_F_cmd);
 			break;
 		case CT_READ:
-			app_read(wks, &cmd->m_R_cmd);
+			e_app_read(wks, &cmd->m_R_cmd);
 			break;
 		case CT_WRITE:
-			app_write(wks, &cmd->m_W_cmd);
+			e_app_write(wks, &cmd->m_W_cmd);
 			break;
 		case CT_DUMP_MEMORY:
-			app_dump_memory(wks);
+			e_app_dump_memory(wks);
 			break;
 		case CT_DESTROY_HEAP:
-			app_destroy_heap(wks);
+			e_app_destroy_heap(wks);
 			return 0;
 		}
 
@@ -431,7 +431,7 @@ void app_main_loop(void)
 	char buffer[MAX_COMMAND_PARAMS][MAX_LINE_SIZE];
 	e_app_init_input_buffer(buffer);
 
-	__u8 is_running = app_tick(&wks, &cmd, buffer);
+	__u8 is_running = e_app_tick(&wks, &cmd, buffer);
 	while (is_running)
-		is_running = app_tick(&wks, &cmd, buffer);
+		is_running = e_app_tick(&wks, &cmd, buffer);
 }
