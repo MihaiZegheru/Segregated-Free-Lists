@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #ifndef STRING_UTILS_H__
 #define STRING_UTILS_H__
 

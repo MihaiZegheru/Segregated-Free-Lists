@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #ifndef SF_LISTS_H__
 #define SF_LISTS_H__
 

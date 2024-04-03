@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #include <node.h>
 
 s_node_t *node_create(size_t data_size, size_t virtual_addr, size_t tag,

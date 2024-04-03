@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #include <string_utils.h>
 
 int8_t string_utils_is_end_char(char c)

@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #ifndef NODE_H__
 #define NODE_H__
 

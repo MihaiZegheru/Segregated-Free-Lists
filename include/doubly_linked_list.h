@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #ifndef DOUBLY_LINKED_LIST_H__
 #define DOUBLY_LINKED_LIST_H__
 

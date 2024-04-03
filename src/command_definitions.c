@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #include <command_definitions.h>
 
 size_t command_definitions_get_number_of_params(e_command_type_t command_type)

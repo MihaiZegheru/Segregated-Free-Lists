@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #include <doubly_linked_list.h>
 
 s_doubly_linked_list_t *dll_create(size_t data_size)

@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #ifndef COMMAND_DEFINITIONS_H__
 #define COMMAND_DEFINITIONS_H__
 

@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #include <command.h>
 
 e_error_type_t command_factory(u_command_t *ptr, size_t params_num,

@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #ifndef STATS_DATA_OBJECT_H__
 #define STATS_DATA_OBJECT_H__
 

@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #ifndef ERROR_TYPE_H__
 #define ERROR_TYPE_H__
 

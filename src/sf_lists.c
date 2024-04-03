@@ -1,3 +1,7 @@
+/**
+ *	Copyright (c) 2023-2024 | Mihai Zegheru | 312CAb
+*/
+
 #include <sf_lists.h>
 
 s_sf_lists_t *sf_lists_create(size_t size, size_t lists_size,
