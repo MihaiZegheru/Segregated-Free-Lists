@@ -17,13 +17,13 @@ EXTRAS=Makefile README.md
 
 .PHONY: build
 build:
-	$(CC) $(CFLAGS) $(HEADERS) $(SOURCES) -o $(BUILD_DIR)/$(EXE) -lm
+	$(CC) $(CFLAGS) $(HEADERS) $(SOURCES) -o sfl -lm
 
 run_sfl:
-	./build/sfl
+	./sfl
 
 pack:
-	zip -FSr 312CA_ZegheruMihai_Tema1.zip $(SRC_DIR) $(INC_DIR) $(BUILD_DIR) $(EXTRAS)
+	zip -FSr 312CA_ZegheruMihai_Tema1.zip $(SRC_DIR) $(INC_DIR) $(EXTRAS)
 
 clean:
-	rm $(BUILD_DIR)/$(EXE)
+	rm ./sfl
