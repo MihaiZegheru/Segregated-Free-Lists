@@ -13,16 +13,17 @@ EXE=sfl
 SOURCES+=$(wildcard $(SRC_DIR)/*.c)
 HEADERS+= $(addprefix -I,$(wildcard $(INC_DIR)))
 
+EXTRAS=Makefile README.md
+
 .PHONY: build
 build:
 	$(CC) $(CFLAGS) $(HEADERS) $(SOURCES) -o $(BUILD_DIR)/$(EXE) -lm
-	# $(CC) $(CFLAGS) $(HEADERS) $(SOURCES) -o sfl -lm
 
 run_sfl:
 	./build/sfl
 
 pack:
-	zip -FSr 312CA_ZegheruMihai_Tema1.zip $(SOURCES) $(HEADERS) $(EXTRAS)
+	zip -FSr 312CA_ZegheruMihai_Tema1.zip $(SRC_DIR) $(INC_DIR) $(BUILD_DIR) $(EXTRAS)
 
 clean:
 	rm $(BUILD_DIR)/$(EXE)
